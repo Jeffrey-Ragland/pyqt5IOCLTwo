@@ -1,0 +1,27 @@
+{
+    "fluid1": {
+        "Trial1": {
+            "reading1": [
+                {
+                    "Temperature": 20.0,
+                    "Density": 20.0,
+                    "Viscosity": 20.0
+                }
+            ],
+            "reading2": [
+                {
+                    "Temperature": 30.0,
+                    "Density": 30.0,
+                    "Viscosity": 30.0
+                }
+            ],
+            "reading3": [
+                {
+                    "Temperature": 40.0,
+                    "Density": 40.0,
+                    "Viscosity": 40.0
+                }
+            ]
+        }
+    }
+}
