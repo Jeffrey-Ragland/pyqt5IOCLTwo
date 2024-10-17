@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QStackedWidget, QTableWidgetItem, QTableWidget, QHeaderView, QPushButton
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt
 import sys
 import json
 
@@ -171,6 +172,7 @@ class CalibrationPageUI(QMainWindow):
 
         self.calibrationTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
+
     def load_logo(self):
         pixmap = QPixmap('xymaLogoWhite.png')  
 
@@ -179,11 +181,13 @@ class CalibrationPageUI(QMainWindow):
         self.xymaLogoLabel.setPixmap(resized_pixmap)
         self.xymaLogoLabel.setScaledContents(True)
 
+
     def populate_table_header(self):
         self.calibrationTable.setColumnCount(5)
 
         headers = ["Fluid Name", "Trial No", "Temperature", "Density", "Viscosity"]
         self.calibrationTable.setHorizontalHeaderLabels(headers)
+
 
     def addToTable(self):
         self.populate_table_header()
@@ -214,6 +218,7 @@ class CalibrationPageUI(QMainWindow):
         self.temperatureInput.clear()
         self.densityInput.clear()
         self.viscosityInput.clear()
+
 
     def submitAddedData(self): 
 
@@ -258,6 +263,7 @@ class CalibrationPageUI(QMainWindow):
 
         self.resetInputs()
 
+
     def editAddedData(self):
         if self.calibrationTable.editTriggers() == QTableWidget.NoEditTriggers:
             self.calibrationTable.setEditTriggers(QTableWidget.AllEditTriggers)
@@ -265,6 +271,7 @@ class CalibrationPageUI(QMainWindow):
         else:
             self.calibrationTable.setEditTriggers(QTableWidget.NoEditTriggers)
             self.calibrationEditButton.setText('Edit')
+
 
     def editAllData(self):
         if not self.editAllMode:
@@ -279,8 +286,13 @@ class CalibrationPageUI(QMainWindow):
             self.calibrationTable.setRowCount(0)
             self.editAllMode = False
 
+
     def loadCalibrationData(self):
         self.calibrationTable.setRowCount(0)
+        self.calibrationTable.setColumnCount(3)
+
+        headers = ["Fluid Name", "Edit", "Delete"]
+        self.calibrationTable.setHorizontalHeaderLabels(headers)
 
         calibrationJsonFile = 'calibrationData.json'
 
@@ -291,48 +303,150 @@ class CalibrationPageUI(QMainWindow):
             self.show_alert('Calibration data file not found.')
             return
 
-        for fluidName, trials in calibrationFileData.items():
-            for trialNo, readings in trials.items():
-                for readingKey, reading in readings.items():
-                    rowPosition = self.calibrationTable.rowCount()
-                    self.calibrationTable.insertRow(rowPosition)
+        for fluidName in calibrationFileData.keys():
+            rowPosition = self.calibrationTable.rowCount()
+            self.calibrationTable.insertRow(rowPosition)
 
-                    self.calibrationTable.setItem(rowPosition, 0, QTableWidgetItem(fluidName))
-                    self.calibrationTable.setItem(rowPosition, 1, QTableWidgetItem(trialNo.replace("Trial", "")))
-                    self.calibrationTable.setItem(rowPosition, 2, QTableWidgetItem(str(reading[0]["Temperature"])))
-                    self.calibrationTable.setItem(rowPosition, 3, QTableWidgetItem(str(reading[0]["Density"])))
-                    self.calibrationTable.setItem(rowPosition, 4, QTableWidgetItem(str(reading[0]["Viscosity"])))
+            self.calibrationTable.setItem(rowPosition, 0, QTableWidgetItem(fluidName))
 
-                    deleteButton = QPushButton("Delete")
-                    deleteButton.clicked.connect(lambda _, row=rowPosition: self.deleteRow(row))
-                    self.calibrationTable.setCellWidget(rowPosition, 5, deleteButton)
+            editButton = QPushButton("Edit")
+            editButton.clicked.connect(lambda _, name=fluidName: self.loadTrials(name))
+            self.calibrationTable.setCellWidget(rowPosition, 1, editButton)
 
-    def deleteRow(self, row):
-        if row >= 0 and row < self.calibrationTable.rowCount():
-            
-            fluidName = self.calibrationTable.item(row, 0).text()
-            trialNo = f"Trial{self.calibrationTable.item(row, 1).text()}"
+            deleteButton = QPushButton("Delete")
+            deleteButton.clicked.connect(lambda _, name=fluidName: self.deleteFluid(name))
+            self.calibrationTable.setCellWidget(rowPosition, 2, deleteButton)
+
+
+    def loadTrials(self, fluidName):
+        self.calibrationTable.setRowCount(0)  # Clear the table
+        self.calibrationTable.setColumnCount(3)
+
+        headers = ["Trial No:", "Edit", "Delete"]
+        self.calibrationTable.setHorizontalHeaderLabels(headers)
+        calibrationJsonFile = 'calibrationData.json'
+        
+        # Load the existing data
+        with open(calibrationJsonFile, 'r') as file:
+            calibrationFileData = json.load(file)
+
+        if fluidName in calibrationFileData:
+            trials = calibrationFileData[fluidName]
+
+            for trialNo in trials.keys():
+                rowPosition = self.calibrationTable.rowCount()
+                self.calibrationTable.insertRow(rowPosition)
+
+                self.calibrationTable.setItem(rowPosition, 0, QTableWidgetItem(trialNo))
+
+                editButton = QPushButton("Edit")
+                editButton.clicked.connect(lambda _, fluid=fluidName, trial=trialNo: self.loadReadings(fluid, trial))
+                self.calibrationTable.setCellWidget(rowPosition, 1, editButton)
+
+                deleteButton = QPushButton("Delete")
+                deleteButton.clicked.connect(lambda _, fluid=fluidName, trial=trialNo: self.deleteTrial(fluid, trial))
+                self.calibrationTable.setCellWidget(rowPosition, 2, deleteButton)
+
+
+    def loadReadings(self, fluidName, trialNo):
+        self.calibrationTable.setRowCount(0)  
+        self.calibrationTable.setColumnCount(3)
+
+        headers = ["Reading No:", "Edit", "Delete"]
+        self.calibrationTable.setHorizontalHeaderLabels(headers)
+
+        calibrationJsonFile = 'calibrationData.json'
+
+        with open(calibrationJsonFile, 'r') as file:
+            calibrationFileData = json.load(file)
+
+        if fluidName in calibrationFileData and trialNo in calibrationFileData[fluidName]:
+            readings = calibrationFileData[fluidName][trialNo]
+
+            for readingNo, reading in readings.items():
+                rowPosition = self.calibrationTable.rowCount()
+                self.calibrationTable.insertRow(rowPosition)
+
+                self.calibrationTable.setItem(rowPosition, 0, QTableWidgetItem(readingNo))
+
+                editButton = QPushButton("Edit")
+                editButton.clicked.connect(lambda _, fluid=fluidName, trial=trialNo, rNo=readingNo: self.editReading(fluid, trial, rNo))
+                self.calibrationTable.setCellWidget(rowPosition, 1, editButton)
+
+                deleteButton = QPushButton("Delete")
+                deleteButton.clicked.connect(lambda _, fluid=fluidName, trial=trialNo, rNo=readingNo: self.deleteReading(fluid, trial, rNo))
+                self.calibrationTable.setCellWidget(rowPosition, 2, deleteButton)
+
+
+    def editReading(self, fluidName, trialNo, readingNo):
+        self.calibrationTable.setRowCount(0)  
+        self.calibrationTable.setColumnCount(4)
+
+        headers = ["Temperature", "Density", "Viscosity", "Save"]
+        self.calibrationTable.setHorizontalHeaderLabels(headers)
+
+        calibrationJsonFile = 'calibrationData.json'
+
+        with open(calibrationJsonFile, 'r') as file:
+            calibrationFileData = json.load(file)
+
+        if fluidName in calibrationFileData and trialNo in calibrationFileData[fluidName]:
+            readings = calibrationFileData[fluidName][trialNo]
+            if readingNo in readings:
+                reading = readings[readingNo][0]  # Fetch the specific reading
+
+                # Insert a new row for the editing process
+                rowPosition = self.calibrationTable.rowCount()
+                self.calibrationTable.insertRow(rowPosition)
+
+                # Set the temperature, density, and viscosity values in the newly inserted row
+                self.calibrationTable.setItem(rowPosition, 0, QTableWidgetItem(str(reading["Temperature"])))
+                self.calibrationTable.setItem(rowPosition, 1, QTableWidgetItem(str(reading["Density"])))
+                self.calibrationTable.setItem(rowPosition, 2, QTableWidgetItem(str(reading["Viscosity"])))
+
+                # Allow editing of the cells
+                self.calibrationTable.setEditTriggers(QTableWidget.AllEditTriggers)
+
+                # Create a Save button for this row
+                saveButton = QPushButton("Save")
+                saveButton.clicked.connect(lambda: self.saveReading(rowPosition, fluidName, trialNo, readingNo))
+                self.calibrationTable.setCellWidget(rowPosition, 3, saveButton)
+
+
     
-            # Load the existing calibration data
-            calibrationJsonFile = 'calibrationData.json'
-            try:
-                with open(calibrationJsonFile, 'r') as file:
-                    calibrationFileData = json.load(file)
-            except FileNotFoundError:
-                calibrationFileData = {}
-    
-            # Delete the reading from the calibrationFileData
-            if fluidName in calibrationFileData and trialNo in calibrationFileData[fluidName]:
-                del calibrationFileData[fluidName][trialNo]
-            
-            # Remove the row from the table
-            self.calibrationTable.removeRow(row)
-    
-            # Save the updated data back to the file
-            with open(calibrationJsonFile, 'w') as file:
-                json.dump(calibrationFileData, file, indent=4)
-    
-            self.show_alert('Calibration Data Deleted Successfully')
+    # def saveReading(self, rowPosition, fluidName, trialNo, readingNo):
+    # # Get the updated values from the table
+    #     newTemperature = self.calibrationTable.item(rowPosition, 1).text()
+    #     newDensity = self.calibrationTable.item(rowPosition, 2).text()
+    #     newViscosity = self.calibrationTable.item(rowPosition, 3).text()
+
+    #     # Load the current calibration data
+    #     calibrationJsonFile = 'calibrationData.json'
+    #     with open(calibrationJsonFile, 'r') as file:
+    #         calibrationFileData = json.load(file)
+
+    #     # Update the values in the data structure
+    #     if fluidName in calibrationFileData and trialNo in calibrationFileData[fluidName]:
+    #         calibrationFileData[fluidName][trialNo][readingNo][0]["Temperature"] = newTemperature
+    #         calibrationFileData[fluidName][trialNo][readingNo][0]["Density"] = newDensity
+    #         calibrationFileData[fluidName][trialNo][readingNo][0]["Viscosity"] = newViscosity
+
+    #     # Write the updated data back to the JSON file
+    #     with open(calibrationJsonFile, 'w') as file:
+    #         json.dump(calibrationFileData, file, indent=4)
+
+    #     # Lock the fields again to prevent further editing
+    #     self.calibrationTable.item(rowPosition, 1).setFlags(self.calibrationTable.item(rowPosition, 1).flags() & ~Qt.ItemIsEditable)
+    #     self.calibrationTable.item(rowPosition, 2).setFlags(self.calibrationTable.item(rowPosition, 2).flags() & ~Qt.ItemIsEditable)
+    #     self.calibrationTable.item(rowPosition, 3).setFlags(self.calibrationTable.item(rowPosition, 3).flags() & ~Qt.ItemIsEditable)
+
+    #     # Replace Save button with Edit button again
+    #     editButton = QPushButton("Edit")
+    #     editButton.clicked.connect(lambda _, fluid=fluidName, trial=trialNo, rNo=readingNo: self.editReading(rowPosition, fluid, trial, rNo))
+    #     self.calibrationTable.setCellWidget(rowPosition, 4, editButton)
+
+    #     # Optionally show a message confirming the save action
+    #     self.show_alert('Reading updated successfully!')
 
 
     def saveEditedData(self):
