@@ -163,7 +163,11 @@ font-weight: bold;
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QSpinBox" name="trialNoInput"/>
+              <widget class="QSpinBox" name="trialNoInput">
+               <property name="maximum">
+                <number>1000</number>
+               </property>
+              </widget>
              </item>
              <item row="2" column="0">
               <widget class="QLabel" name="label_4">
@@ -173,7 +177,11 @@ font-weight: bold;
               </widget>
              </item>
              <item row="2" column="1">
-              <widget class="QSpinBox" name="temperatureInput"/>
+              <widget class="QSpinBox" name="temperatureInput">
+               <property name="maximum">
+                <number>1000</number>
+               </property>
+              </widget>
              </item>
              <item row="3" column="0">
               <widget class="QLabel" name="label_5">
@@ -183,7 +191,11 @@ font-weight: bold;
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="QSpinBox" name="densityInput"/>
+              <widget class="QSpinBox" name="densityInput">
+               <property name="maximum">
+                <number>1000</number>
+               </property>
+              </widget>
              </item>
              <item row="4" column="0">
               <widget class="QLabel" name="label_6">
@@ -193,7 +205,11 @@ font-weight: bold;
               </widget>
              </item>
              <item row="4" column="1">
-              <widget class="QSpinBox" name="viscosityInput"/>
+              <widget class="QSpinBox" name="viscosityInput">
+               <property name="maximum">
+                <number>1000</number>
+               </property>
+              </widget>
              </item>
              <item row="5" column="0">
               <spacer name="verticalSpacer">
@@ -258,6 +274,13 @@ font-weight: bold;
                  </widget>
                 </item>
                 <item>
+                 <widget class="QPushButton" name="calibrationEditAllButton">
+                  <property name="text">
+                   <string>Edit All</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QPushButton" name="calibrationSubmitButton">
                   <property name="text">
                    <string>Submit</string>
@@ -273,13 +296,14 @@ font-weight: bold;
           <item>
            <widget class="QTableWidget" name="calibrationTable">
             <property name="columnCount">
-             <number>5</number>
+             <number>0</number>
             </property>
-            <column/>
-            <column/>
-            <column/>
-            <column/>
-            <column/>
+            <attribute name="horizontalHeaderVisible">
+             <bool>true</bool>
+            </attribute>
+            <attribute name="horizontalHeaderStretchLastSection">
+             <bool>false</bool>
+            </attribute>
            </widget>
           </item>
          </layout>
@@ -309,7 +333,7 @@ font-weight: bold;
      <x>0</x>
      <y>0</y>
      <width>1224</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

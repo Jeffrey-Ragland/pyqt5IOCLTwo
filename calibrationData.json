@@ -5,21 +5,105 @@
                 {
                     "Temperature": 20.0,
                     "Density": 20.0,
-                    "Viscosity": 20.0
+                    "Viscosity": 125.0
                 }
             ],
             "reading2": [
                 {
                     "Temperature": 30.0,
                     "Density": 30.0,
-                    "Viscosity": 30.0
+                    "Viscosity": 125.0
                 }
             ],
             "reading3": [
                 {
                     "Temperature": 40.0,
                     "Density": 40.0,
-                    "Viscosity": 40.0
+                    "Viscosity": 125.0
+                }
+            ]
+        },
+        "Trial2": {
+            "reading1": [
+                {
+                    "Temperature": 150.0,
+                    "Density": 150.0,
+                    "Viscosity": 150.0
+                }
+            ],
+            "reading2": [
+                {
+                    "Temperature": 200.0,
+                    "Density": 200.0,
+                    "Viscosity": 200.0
+                }
+            ],
+            "reading3": [
+                {
+                    "Temperature": 130.0,
+                    "Density": 130.0,
+                    "Viscosity": 130.0
+                }
+            ]
+        }
+    },
+    "fluid3": {
+        "Trial1": {
+            "reading1": [
+                {
+                    "Temperature": 10.0,
+                    "Density": 10.0,
+                    "Viscosity": 125.0
+                }
+            ]
+        },
+        "Trial2": {
+            "reading1": [
+                {
+                    "Temperature": 20.0,
+                    "Density": 100.0,
+                    "Viscosity": 125.0
+                }
+            ]
+        }
+    },
+    "fluid2": {
+        "Trial1": {
+            "reading1": [
+                {
+                    "Temperature": 105.0,
+                    "Density": 105.0,
+                    "Viscosity": 105.0
+                }
+            ],
+            "reading2": [
+                {
+                    "Temperature": 110.0,
+                    "Density": 110.0,
+                    "Viscosity": 110.0
+                }
+            ]
+        },
+        "Trial2": {
+            "reading1": [
+                {
+                    "Temperature": 120.0,
+                    "Density": 120.0,
+                    "Viscosity": 120.0
+                }
+            ],
+            "reading2": [
+                {
+                    "Temperature": 120.0,
+                    "Density": 120.0,
+                    "Viscosity": 120.0
+                }
+            ],
+            "reading3": [
+                {
+                    "Temperature": 130.0,
+                    "Density": 130.0,
+                    "Viscosity": 130.0
                 }
             ]
         }
