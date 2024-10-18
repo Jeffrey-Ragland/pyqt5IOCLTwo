@@ -47,63 +47,50 @@
             ]
         }
     },
-    "fluid3": {
-        "Trial1": {
-            "reading1": [
-                {
-                    "Temperature": 10.0,
-                    "Density": 10.0,
-                    "Viscosity": 125.0
-                }
-            ]
-        },
-        "Trial2": {
-            "reading1": [
-                {
-                    "Temperature": 20.0,
-                    "Density": 100.0,
-                    "Viscosity": 125.0
-                }
-            ]
-        }
-    },
     "fluid2": {
         "Trial1": {
             "reading1": [
                 {
-                    "Temperature": 105.0,
-                    "Density": 105.0,
-                    "Viscosity": 105.0
+                    "Temperature": 11.0,
+                    "Density": 11.0,
+                    "Viscosity": 11.0
                 }
             ],
             "reading2": [
                 {
-                    "Temperature": 110.0,
-                    "Density": 110.0,
-                    "Viscosity": 110.0
+                    "Temperature": 22.0,
+                    "Density": 22.0,
+                    "Viscosity": 22.0
+                }
+            ],
+            "reading3": [
+                {
+                    "Temperature": 33.0,
+                    "Density": 33.0,
+                    "Viscosity": 33.0
                 }
             ]
         },
         "Trial2": {
             "reading1": [
                 {
-                    "Temperature": 120.0,
-                    "Density": 120.0,
-                    "Viscosity": 120.0
+                    "Temperature": 44.0,
+                    "Density": 44.0,
+                    "Viscosity": 44.0
                 }
             ],
             "reading2": [
                 {
-                    "Temperature": 120.0,
-                    "Density": 120.0,
-                    "Viscosity": 120.0
+                    "Temperature": 55.0,
+                    "Density": 55.0,
+                    "Viscosity": 55.0
                 }
             ],
             "reading3": [
                 {
-                    "Temperature": 130.0,
-                    "Density": 130.0,
-                    "Viscosity": 130.0
+                    "Temperature": 66.0,
+                    "Density": 66.0,
+                    "Viscosity": 66.0
                 }
             ]
         }
