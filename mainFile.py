@@ -1,9 +1,12 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QStackedWidget, QTableWidgetItem, QTableWidget, QHeaderView, QPushButton
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QTimer
 import sys
 import json
+import time
+import serial
+import serial.tools.list_ports
 
 class MainUI(QMainWindow):
     def __init__(self):
@@ -13,7 +16,7 @@ class MainUI(QMainWindow):
 
         self.loginPage = LoginUI(self)
         self.mainPage = MainPageUI(self)
-        self.testingPage = TestingPageUI(self)
+        self.testingPage = TestingPageUI(self, None)
         self.calibrationPage = CalibrationPageUI(self)
         self.reportsPage = ReportsPageUI(self)
 
@@ -29,14 +32,61 @@ class MainUI(QMainWindow):
 
         self.stackedWidget.currentChanged.connect(self.on_page_changed)
 
+        self.check_serial_port()
+
     def on_page_changed(self, index):
         current_page = self.stackedWidget.currentWidget()
+        
+        if current_page == self.testingPage:
+            self.testingPage.start_serial_reading()
+        else:
+            self.testingPage.stop_serial_reading()
 
         if isinstance(current_page, LoginUI):
             self.showMaximized()  
         else:
             self.showFullScreen() 
 
+    def check_serial_port(self):
+        
+        ports = serial.tools.list_ports.comports()
+
+        usbPorts = []
+
+        for port in ports:
+            if 'USB' in port.description:
+                usbPorts.append(port.device)
+
+        if usbPorts:
+            self.port_name = usbPorts[0]
+            print(f"USB Serial Port found: {self.port_name}")
+            self.establish_serial_connection()
+
+        else:
+            QMessageBox.critical(self, "Port Not Availabe", "No USB serial port found. The application cannot proceed!")
+            sys.exit()
+            
+    def establish_serial_connection(self):
+        try:
+            self.serial_connection = serial.Serial(self.port_name, 230400)
+            print(f"Serial connection established on {self.port_name}")
+            
+            self.testingPage.serial_connection = self.serial_connection
+            
+            self.stackedWidget.setCurrentWidget(self.loginPage)
+            
+        except serial.SerialException as e:
+            QMessageBox.critical(self, "Serial Connection Error", f"Failed to establish serial connection: {str(e)}")
+            sys.exit()
+            
+    def closeEvent(self, event):
+        if self.serial_connection and self.serial_connection.is_open:
+            print('Closing serial connection...')
+            self.serial_connection.close()
+            print('Serial connection terminated!')
+            
+        event.accept()
+            
 class LoginUI(QMainWindow):
     def __init__(self, mainUI):
         super(LoginUI, self).__init__()
@@ -114,7 +164,7 @@ class MainPageUI(QMainWindow):
        self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.reportsPage)
 
 class TestingPageUI(QMainWindow):
-    def __init__(self, mainUI):
+    def __init__(self, mainUI, serial_connection):
         super(TestingPageUI, self).__init__()
         loadUi("testingPage.ui", self)
 
@@ -126,8 +176,15 @@ class TestingPageUI(QMainWindow):
         self.mainUI = mainUI
         self.testingBackButton.clicked.connect(self.testingGoBack)
         self.testingLogoutButton.clicked.connect(self.logout)
+        self.testingStartButton.clicked.connect(self.send_string_format)
+        self.testingStopButton.clicked.connect(self.send_empty_string)
 
         self.load_logo()
+        
+        self.serial_connection = serial_connection
+        
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.read_serial_data)
 
     def load_logo(self):
         pixmap = QPixmap('xymaLogoWhite.png')  
@@ -141,6 +198,40 @@ class TestingPageUI(QMainWindow):
 
     def logout(self): 
        self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.loginPage)
+       
+    def send_string_format(self):
+        if self.serial_connection:
+            data = "(1,0,0,2.0,200000,50,2,7,4,200000,0,100,4,1,0)"
+            print(f"String format sent: {data}")
+            self.serial_connection.write(data.encode())
+        else:
+            print('Serial connection not established')
+            
+    def send_empty_string(self):
+        if self.serial_connection:
+            data = b"\n"
+            print(f"String format sent: {data}")
+            self.serial_connection.write(data)
+        else:
+            print('Serial connection not established')
+                
+    def start_serial_reading(self):
+        if self.serial_connection:
+            self.timer.start(100)
+            print('Serial reading started')
+            
+    def stop_serial_reading(self):
+        self.timer.stop()
+        print('Serial reading stopped')
+        
+    def read_serial_data(self):
+        # print('read serial data function triggered')
+        if self.serial_connection and self.serial_connection.in_waiting > 0:
+            serialData = self.serial_connection.readline().decode('utf-8').strip()
+            if serialData:
+                print(f'Serial data received: {serialData}')
+            else: 
+                print('Cant receive serial data!')
 
 # calibration page
 class CalibrationPageUI(QMainWindow):
@@ -467,7 +558,7 @@ class CalibrationPageUI(QMainWindow):
             with open(calibrationJsonFile, 'w') as file:
                 json.dump(calibrationFileData, file, indent=4)
 
-            self.show_alert(f'Trial {trialNo} of {fluidName} deleted successfully!')
+            self.show_alert(f'{trialNo} of {fluidName} deleted successfully!')
             self.loadTrials(fluidName) 
 
 
@@ -491,7 +582,7 @@ class CalibrationPageUI(QMainWindow):
             with open(calibrationJsonFile, 'w') as file:
                 json.dump(calibrationFileData, file, indent=4)
 
-            self.show_alert(f'Reading {readingNo} of Trial {trialNo} for {fluidName} deleted successfully!')
+            self.show_alert(f'{readingNo} of {trialNo} for {fluidName} deleted successfully!')
             self.loadReadings(fluidName, trialNo) 
     
 
