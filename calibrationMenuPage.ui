@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>860</width>
-    <height>597</height>
+    <width>1077</width>
+    <height>675</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,14 +38,14 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>235</width>
+           <width>349</width>
            <height>20</height>
           </size>
          </property>
         </spacer>
        </item>
        <item>
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="label">
          <property name="styleSheet">
           <string notr="true">QLabel {
     color: white;
@@ -53,7 +53,7 @@
 }</string>
          </property>
          <property name="text">
-          <string>Testing Page</string>
+          <string>Calibration Menu</string>
          </property>
         </widget>
        </item>
@@ -64,7 +64,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>235</width>
+           <width>349</width>
            <height>20</height>
           </size>
          </property>
@@ -80,20 +80,14 @@
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QPushButton" name="testingBackButton">
-            <property name="styleSheet">
-             <string notr="true"/>
-            </property>
+           <widget class="QPushButton" name="calibrationMenuBackButton">
             <property name="text">
              <string>Back</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="testingLogoutButton">
-            <property name="styleSheet">
-             <string notr="true"/>
-            </property>
+           <widget class="QPushButton" name="calibrationMenuLogoutButton">
             <property name="text">
              <string>Logout</string>
             </property>
@@ -122,19 +116,19 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>179</height>
+           <height>221</height>
           </size>
          </property>
         </spacer>
        </item>
        <item row="1" column="0">
-        <spacer name="horizontalSpacer_3">
+        <spacer name="horizontalSpacer_4">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>274</width>
+           <width>301</width>
            <height>20</height>
           </size>
          </property>
@@ -149,26 +143,54 @@
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <property name="spacing">
-           <number>40</number>
-          </property>
           <item>
-           <widget class="QPushButton" name="testingStartButton">
+           <widget class="QPushButton" name="manualCalibrationButton">
             <property name="styleSheet">
-             <string notr="true"/>
+             <string notr="true">#manualCalibrationButton {
+	background-color: rgb(0, 0, 255);
+   color: white;
+	border-radius: 6px;
+	padding: 10px 20px;
+	font: bold;
+}
+
+
+</string>
             </property>
             <property name="text">
-             <string>Start</string>
+             <string>Manual Calibration</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="testingStopButton">
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="waveguideCalibrationButton">
             <property name="styleSheet">
-             <string notr="true"/>
+             <string notr="true">#waveguideCalibrationButton {
+	background-color: rgb(0, 0, 255);
+   color: white;
+	border-radius: 6px;
+	padding: 10px 20px;
+	font: bold;
+}
+
+
+</string>
             </property>
             <property name="text">
-             <string>Stop</string>
+             <string>Waveguide Calibration</string>
             </property>
            </widget>
           </item>
@@ -176,13 +198,13 @@
         </widget>
        </item>
        <item row="1" column="2">
-        <spacer name="horizontalSpacer_4">
+        <spacer name="horizontalSpacer_5">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>273</width>
+           <width>301</width>
            <height>20</height>
           </size>
          </property>
@@ -196,7 +218,7 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>178</height>
+           <height>221</height>
           </size>
          </property>
         </spacer>
@@ -211,7 +233,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>860</width>
+     <width>1077</width>
      <height>26</height>
     </rect>
    </property>

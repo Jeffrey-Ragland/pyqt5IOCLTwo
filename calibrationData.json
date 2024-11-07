@@ -1,96 +1,79 @@
 {
-    "fluid1": {
+    "fluid1-Fresh": {
         "Trial1": {
             "reading1": [
                 {
-                    "Temperature": 20.0,
-                    "Density": 20.0,
-                    "Viscosity": 125.0
+                    "Temperature": 10.0,
+                    "Density": 10.0,
+                    "Viscosity": 10.0
                 }
             ],
             "reading2": [
+                {
+                    "Temperature": 20.0,
+                    "Density": 20.0,
+                    "Viscosity": 20.0
+                }
+            ],
+            "reading3": [
                 {
                     "Temperature": 30.0,
                     "Density": 30.0,
-                    "Viscosity": 125.0
-                }
-            ],
-            "reading3": [
-                {
-                    "Temperature": 40.0,
-                    "Density": 40.0,
-                    "Viscosity": 125.0
-                }
-            ]
-        },
-        "Trial2": {
-            "reading1": [
-                {
-                    "Temperature": 150.0,
-                    "Density": 150.0,
-                    "Viscosity": 150.0
-                }
-            ],
-            "reading2": [
-                {
-                    "Temperature": 200.0,
-                    "Density": 200.0,
-                    "Viscosity": 200.0
-                }
-            ],
-            "reading3": [
-                {
-                    "Temperature": 130.0,
-                    "Density": 130.0,
-                    "Viscosity": 130.0
+                    "Viscosity": 30.0
                 }
             ]
         }
     },
-    "fluid2": {
+    "fluid1-Used": {
         "Trial1": {
             "reading1": [
                 {
-                    "Temperature": 11.0,
-                    "Density": 11.0,
-                    "Viscosity": 11.0
+                    "Temperature": 10.0,
+                    "Density": 10.0,
+                    "Viscosity": 10.0
                 }
             ],
             "reading2": [
                 {
-                    "Temperature": 22.0,
-                    "Density": 22.0,
-                    "Viscosity": 22.0
-                }
-            ],
-            "reading3": [
-                {
-                    "Temperature": 33.0,
-                    "Density": 33.0,
-                    "Viscosity": 33.0
+                    "Temperature": 20.0,
+                    "Density": 20.0,
+                    "Viscosity": 20.0
                 }
             ]
-        },
-        "Trial2": {
+        }
+    },
+    "fluid2-Used": {
+        "Trial1": {
             "reading1": [
                 {
-                    "Temperature": 44.0,
-                    "Density": 44.0,
-                    "Viscosity": 44.0
+                    "Temperature": 10.0,
+                    "Density": 10.0,
+                    "Viscosity": 10.0
                 }
             ],
             "reading2": [
                 {
-                    "Temperature": 55.0,
-                    "Density": 55.0,
-                    "Viscosity": 55.0
+                    "Temperature": 20.0,
+                    "Density": 20.0,
+                    "Viscosity": 20.0
+                }
+            ]
+        }
+    },
+    "fluid3-Fresh": {
+        "Trial1": {
+            "reading1": [
+                {
+                    "Temperature": 10.0,
+                    "Density": 10.0,
+                    "Viscosity": 10.0
                 }
             ],
-            "reading3": [
+            "reading2": [
                 {
-                    "Temperature": 66.0,
-                    "Density": 66.0,
-                    "Viscosity": 66.0
+                    "Temperature": 20.0,
+                    "Density": 20.0,
+                    "Viscosity": 20.0
                 }
             ]
         }

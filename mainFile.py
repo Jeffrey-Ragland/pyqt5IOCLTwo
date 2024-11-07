@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QStackedWidget, QTableWidgetItem, QTableWidget, QHeaderView, QPushButton
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import QThread, pyqtSignal
 import sys
 import json
 import time
@@ -17,13 +17,17 @@ class MainUI(QMainWindow):
         self.loginPage = LoginUI(self)
         self.mainPage = MainPageUI(self)
         self.testingPage = TestingPageUI(self, None)
-        self.calibrationPage = CalibrationPageUI(self)
+        self.calibrationMenuPage = CalibrationMenuPageUI(self)
+        self.manualCalibrationPage = ManualCalibrationPageUI(self)
+        self.waveguideCalibrationPage = WaveguideCalibrationPageUI(self)
         self.reportsPage = ReportsPageUI(self)
 
         self.stackedWidget.addWidget(self.loginPage)
         self.stackedWidget.addWidget(self.mainPage)
         self.stackedWidget.addWidget(self.testingPage)
-        self.stackedWidget.addWidget(self.calibrationPage)
+        self.stackedWidget.addWidget(self.calibrationMenuPage)
+        self.stackedWidget.addWidget(self.manualCalibrationPage)
+        self.stackedWidget.addWidget(self.waveguideCalibrationPage)
         self.stackedWidget.addWidget(self.reportsPage)
         
         self.stackedWidget.setCurrentWidget(self.loginPage)
@@ -138,7 +142,7 @@ class MainPageUI(QMainWindow):
         self.mainUI = mainUI
         self.logoutButton.clicked.connect(self.logout)
         self.testingButton.clicked.connect(self.GoToTestingPage)
-        self.calibrationButton.clicked.connect(self.GoToCalibrationPage)
+        self.calibrationButton.clicked.connect(self.GoToCalibrationMenuPage)
         self.reportsButton.clicked.connect(self.GoToReportsPage)
 
         self.load_logo()
@@ -157,12 +161,36 @@ class MainPageUI(QMainWindow):
     def GoToTestingPage(self):
         self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.testingPage)
 
-    def GoToCalibrationPage(self):
-        self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.calibrationPage)
+    def GoToCalibrationMenuPage(self):
+        self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.calibrationMenuPage)
 
     def GoToReportsPage(self):
        self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.reportsPage)
+       
+# serial reading thread in testing page    
+class SerialReaderThread(QThread):
+    data_received = pyqtSignal(str)
+    
+    def __init__(self, serial_connection):
+        super(SerialReaderThread, self).__init__()
+        self.serial_connection = serial_connection
+        self.running = True
+    
+    def run(self):
+        while self.running:
+            if self.serial_connection and self.serial_connection.in_waiting > 0:
+                serialData = self.serial_connection.readline().decode('utf-8').strip()
+                if serialData:
+                    self.data_received.emit(serialData)
+                else:
+                    self.msleep(10)
+                    
+    def stop(self):
+        self.running = False
+        self.quit()
+        self.wait()
 
+# testing page function
 class TestingPageUI(QMainWindow):
     def __init__(self, mainUI, serial_connection):
         super(TestingPageUI, self).__init__()
@@ -174,6 +202,10 @@ class TestingPageUI(QMainWindow):
                            "}")
 
         self.mainUI = mainUI
+        self.serial_connection = serial_connection
+        
+        # self.testingStopButton.setEnabled(False)
+        
         self.testingBackButton.clicked.connect(self.testingGoBack)
         self.testingLogoutButton.clicked.connect(self.logout)
         self.testingStartButton.clicked.connect(self.send_string_format)
@@ -181,10 +213,7 @@ class TestingPageUI(QMainWindow):
 
         self.load_logo()
         
-        self.serial_connection = serial_connection
-        
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.read_serial_data)
+        self.serial_reader_thread = None
 
     def load_logo(self):
         pixmap = QPixmap('xymaLogoWhite.png')  
@@ -201,43 +230,90 @@ class TestingPageUI(QMainWindow):
        
     def send_string_format(self):
         if self.serial_connection:
+            data = "\n"
+            print(f"String format sent: {data}")
+            self.serial_connection.write(data.encode())
+            time.sleep(0.5)
+            
             data = "(1,0,0,2.0,200000,50,2,7,4,200000,0,100,4,1,0)"
             print(f"String format sent: {data}")
             self.serial_connection.write(data.encode())
+            
+            # self.testingStartButton.setEnabled(False)
+            # self.testingStopButton.setEnabled(True)
         else:
             print('Serial connection not established')
             
     def send_empty_string(self):
         if self.serial_connection:
-            data = b"\n"
+            data = "\n"
             print(f"String format sent: {data}")
-            self.serial_connection.write(data)
+            self.serial_connection.write(data.encode())
+            
+            # self.testingStartButton.setEnabled(True)
+            # self.testingStopButton.setEnabled(False)
         else:
             print('Serial connection not established')
                 
     def start_serial_reading(self):
         if self.serial_connection:
-            self.timer.start(100)
+            self.serial_reader_thread = SerialReaderThread(self.serial_connection)
+            self.serial_reader_thread.data_received.connect(self.on_data_received)
+            self.serial_reader_thread.start()
             print('Serial reading started')
             
     def stop_serial_reading(self):
-        self.timer.stop()
-        print('Serial reading stopped')
-        
-    def read_serial_data(self):
-        # print('read serial data function triggered')
-        if self.serial_connection and self.serial_connection.in_waiting > 0:
-            serialData = self.serial_connection.readline().decode('utf-8').strip()
-            if serialData:
-                print(f'Serial data received: {serialData}')
-            else: 
-                print('Cant receive serial data!')
+        if self.serial_reader_thread:
+            self.serial_reader_thread.stop()
+            print('Serial reading stopped')
 
-# calibration page
-class CalibrationPageUI(QMainWindow):
+    def on_data_received(self, serial_data):
+        print(f'Serial data received: {serial_data}')    
+
+class CalibrationMenuPageUI(QMainWindow):
     def __init__(self, mainUI):
-        super(CalibrationPageUI, self).__init__()
-        loadUi("calibrationPage.ui", self)
+        super(CalibrationMenuPageUI, self).__init__()
+        loadUi("calibrationMenuPage.ui", self)
+        
+        self.setStyleSheet("QMainWindow {"
+                           "background-image: url('homepage.png');"  
+                           "background-position: center;"
+                           "}")
+        
+        self.mainUI = mainUI
+        self.manualCalibrationButton.clicked.connect(self.goToMaualCalibrationPage)
+        self.waveguideCalibrationButton.clicked.connect(self.goToWaveguideCalibrationPage)
+        self.calibrationMenuBackButton.clicked.connect(self.goToMainMenu)
+        self.calibrationMenuLogoutButton.clicked.connect(self.logout)
+        
+        
+        self.load_logo()
+
+    def load_logo(self):
+        pixmap = QPixmap('xymaLogoBlue.png')  
+
+        resized_pixmap = pixmap.scaled(200, 100, aspectRatioMode=1) 
+    
+        self.XymaLogoLabel.setPixmap(resized_pixmap)
+        self.XymaLogoLabel.setScaledContents(True)
+        
+    def goToMaualCalibrationPage(self):
+        self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.manualCalibrationPage)
+        
+    def goToWaveguideCalibrationPage(self):
+        self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.waveguideCalibrationPage)
+        
+    def goToMainMenu(self):
+        self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.mainPage)  
+        
+    def logout(self): 
+       self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.loginPage)  
+                
+# calibration page
+class ManualCalibrationPageUI(QMainWindow):
+    def __init__(self, mainUI):
+        super(ManualCalibrationPageUI, self).__init__()
+        loadUi("manualCalibrationPage.ui", self)
 
         self.setStyleSheet("QMainWindow {"
                            "background-image: url('homepage.png');"  
@@ -282,15 +358,24 @@ class CalibrationPageUI(QMainWindow):
 
     def addToTable(self):
         self.populate_table_header()
+        
         fluidName = self.fluidNameInput.text()
         trialNo = self.trialNoInput.value()
         temperature = self.temperatureInput.value()
         density = self.densityInput.value()
         viscosity = self.viscosityInput.value()
+        
+        oilStatus = None
+        if self.freshRadioButton.isChecked():
+            oilStatus = self.freshRadioButton.text()
+        elif self.usedRadioButton.isChecked():
+            oilStatus = self.usedRadioButton.text()
 
-        if not fluidName or not trialNo or temperature is None or density is None or viscosity is None:
+        if not fluidName or not trialNo or temperature is None or density is None or viscosity is None or oilStatus is None:
             self.show_alert("Please fill in all fields before adding.")
             return
+        
+        fluidName = fluidName + "-" + oilStatus 
 
         rowPosition = self.calibrationTable.rowCount()
         self.calibrationTable.insertRow(rowPosition)
@@ -304,6 +389,8 @@ class CalibrationPageUI(QMainWindow):
         if not self.inputsLocked:
             self.fluidNameInput.setDisabled(True)
             self.trialNoInput.setDisabled(True)
+            self.freshRadioButton.setDisabled(True)
+            self.usedRadioButton.setDisabled(True)
             self.inputsLocked = True
 
         self.temperatureInput.clear()
@@ -594,8 +681,18 @@ class CalibrationPageUI(QMainWindow):
     def resetInputs(self):
         self.fluidNameInput.setDisabled(False)  
         self.trialNoInput.setDisabled(False)
+        self.freshRadioButton.setDisabled(False)
+        self.usedRadioButton.setDisabled(False)
         self.fluidNameInput.clear()
         self.trialNoInput.clear()
+        # resetting the radio button ->
+        self.freshRadioButton.setAutoExclusive(False)
+        self.usedRadioButton.setAutoExclusive(False)
+        self.freshRadioButton.setChecked(False)
+        self.usedRadioButton.setChecked(False)
+        self.freshRadioButton.setAutoExclusive(True)
+        self.usedRadioButton.setAutoExclusive(True)
+        # <-
         self.temperatureInput.clear()
         self.densityInput.clear()
         self.viscosityInput.clear()
@@ -612,21 +709,71 @@ class CalibrationPageUI(QMainWindow):
         msg.exec_()  
 
     def calibrationGoBack(self):
-       self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.mainPage)
+       self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.calibrationMenuPage)
 
     def logout(self): 
        self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.loginPage)
 
+class WaveguideCalibrationPageUI(QMainWindow):
+    def __init__(self, MainUI):
+        super(WaveguideCalibrationPageUI, self).__init__()
+        loadUi("waveguideCalibrationPage.ui", self)
+        
+        self.setStyleSheet("QMainWindow {"
+                           "background-image: url('homepage.png');"  
+                           "background-position: center;"
+                           "}")
+        
+        self.mainUI = MainUI
+        
+        self.waveguideBackButton.clicked.connect(self.goToCalibrationMenu)
+        self.waveguideLogoutButton.clicked.connect(self.logout)
+        
+        self.load_logo()
+        
+    def load_logo(self):
+        pixmap = QPixmap('xymaLogoBlue.png')  
+
+        resized_pixmap = pixmap.scaled(200, 100, aspectRatioMode=1) 
+    
+        self.XymaLogoLabel.setPixmap(resized_pixmap)
+        self.XymaLogoLabel.setScaledContents(True)
+        
+    def goToCalibrationMenu(self):
+        self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.calibrationMenuPage)
+        
+    def logout(self): 
+       self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.loginPage)  
+        
 class ReportsPageUI(QMainWindow):
     def __init__(self, mainUI):
         super(ReportsPageUI, self).__init__()
         loadUi("reportsPage.ui", self)
+        
+        self.setStyleSheet("QMainWindow {"
+                           "background-image: url('homepage.png');"  
+                           "background-position: center;"
+                           "}")
 
         self.mainUI = mainUI
         self.reportsBackButton.clicked.connect(self.reportsGoBack)
+        self.logoutButton.clicked.connect(self.logout)
+        
+        self.load_logo()
+        
+    def load_logo(self):
+        pixmap = QPixmap('xymaLogoBlue.png')  
+
+        resized_pixmap = pixmap.scaled(200, 100, aspectRatioMode=1) 
+    
+        self.xymaLogo.setPixmap(resized_pixmap)
+        self.xymaLogo.setScaledContents(True)
 
     def reportsGoBack(self):
         self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.mainPage)
+        
+    def logout(self): 
+       self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.loginPage)  
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
