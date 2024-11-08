@@ -72,6 +72,16 @@
        </item>
        <item>
         <widget class="QFrame" name="frame">
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+	background-color: rgb(255, 0, 0);
+   	color: white;
+	border-radius: 6px;
+	padding: 10px 20px;
+	font: bold;
+}
+</string>
+         </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
@@ -116,7 +126,7 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>83</height>
+           <height>81</height>
           </size>
          </property>
         </spacer>
@@ -273,7 +283,7 @@ QGroupBox {
                <property name="sizeHint" stdset="0">
                 <size>
                  <width>20</width>
-                 <height>223</height>
+                 <height>204</height>
                 </size>
                </property>
               </spacer>
@@ -286,13 +296,23 @@ QGroupBox {
                <property name="sizeHint" stdset="0">
                 <size>
                  <width>20</width>
-                 <height>223</height>
+                 <height>204</height>
                 </size>
                </property>
               </spacer>
              </item>
              <item row="7" column="0" colspan="4">
               <widget class="QFrame" name="frame_4">
+               <property name="styleSheet">
+                <string notr="true">QPushButton {
+	background-color: rgb(228, 186, 76);
+	border-radius: 6px;
+	padding: 10px 20px;
+	font: bold;
+}
+
+</string>
+               </property>
                <property name="frameShape">
                 <enum>QFrame::StyledPanel</enum>
                </property>
@@ -353,7 +373,7 @@ QGroupBox {
              <number>0</number>
             </property>
             <attribute name="horizontalHeaderVisible">
-             <bool>true</bool>
+             <bool>false</bool>
             </attribute>
             <attribute name="horizontalHeaderStretchLastSection">
              <bool>false</bool>
@@ -371,7 +391,7 @@ QGroupBox {
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>82</height>
+           <height>81</height>
           </size>
          </property>
         </spacer>

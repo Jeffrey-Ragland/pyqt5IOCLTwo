@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>860</width>
-    <height>597</height>
+    <width>1035</width>
+    <height>713</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout_8">
     <item>
      <widget class="QFrame" name="frame">
       <property name="frameShape">
@@ -72,13 +72,23 @@
        </item>
        <item>
         <widget class="QFrame" name="frame_2">
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+	background-color: rgb(255, 0, 0);
+   	color: white;
+	border-radius: 6px;
+	padding: 10px 20px;
+	font: bold;
+}
+</string>
+         </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout">
+         <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
           <item>
            <widget class="QPushButton" name="testingBackButton">
             <property name="styleSheet">
@@ -113,21 +123,37 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="1">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="QFrame" name="frame_5">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>179</height>
-          </size>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
          </property>
-        </spacer>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="styleSheet">
+             <string notr="true">QLabel {
+    color: white;
+	font-weight: bold;
+}
+</string>
+            </property>
+            <property name="text">
+             <string>Select Fluid</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="testingFluidDropdown"/>
+          </item>
+         </layout>
+        </widget>
        </item>
-       <item row="1" column="0">
+       <item>
         <spacer name="horizontalSpacer_3">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -140,8 +166,18 @@
          </property>
         </spacer>
        </item>
-       <item row="1" column="1">
+       <item>
         <widget class="QFrame" name="frame_4">
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+	background-color: rgb(228, 186, 76);
+	border-radius: 6px;
+	padding: 10px 20px;
+	font: bold;
+}
+
+</string>
+         </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
@@ -175,28 +211,397 @@
          </layout>
         </widget>
        </item>
-       <item row="1" column="2">
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QFrame" name="frame_14">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="1,10,1">
+       <item>
         <spacer name="horizontalSpacer_4">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>273</width>
+           <width>79</width>
            <height>20</height>
           </size>
          </property>
         </spacer>
        </item>
-       <item row="2" column="1">
-        <spacer name="verticalSpacer_2">
+       <item>
+        <widget class="QFrame" name="frame_13">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QFrame" name="frame_6">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QGridLayout" name="gridLayout" rowstretch="1,1" columnstretch="1,1,1">
+             <property name="spacing">
+              <number>20</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="QFrame" name="frame_8">
+               <property name="styleSheet">
+                <string notr="true">#frame_8 {
+    padding: 4px;
+    border-radius: 6px; 
+    background-color: rgb(228, 186, 76);
+}
+</string>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_2">
+                <item>
+                 <widget class="QLabel" name="label_4">
+                  <property name="styleSheet">
+                   <string notr="true">QLabel {
+	font: bold;
+	color: white;
+	font-size: 20px;
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>Density</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="densityCardLabel">
+                  <property name="styleSheet">
+                   <string notr="true">#densityCardLabel {
+	font: bold;
+	color: white;
+	font-size: 30px;
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>0 kg/m³</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QFrame" name="frame_9">
+               <property name="styleSheet">
+                <string notr="true">#frame_9 {
+    padding: 4px;
+    border-radius: 6px; 
+    background-color: rgb(228, 186, 76);
+}
+
+QLabel {
+	font: bold;
+	color: white;
+	font-size: 20px;
+}
+
+#viscosityCardLabel {
+	font-size: 30px;
+}
+</string>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_3">
+                <item>
+                 <widget class="QLabel" name="label_5">
+                  <property name="text">
+                   <string>Viscosity</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="viscosityCardLabel">
+                  <property name="text">
+                   <string>0 cP</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QFrame" name="frame_7">
+               <property name="styleSheet">
+                <string notr="true">#frame_7 {
+    padding: 4px;
+    border-radius: 6px; 
+    background-color: rgb(228, 186, 76);
+}
+
+QLabel {
+	font: bold;
+	color: white;
+	font-size: 20px;
+}
+
+#temperatureCardLabel {
+	font-size: 30px;
+}
+</string>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout">
+                <item>
+                 <widget class="QLabel" name="label_3">
+                  <property name="text">
+                   <string>Temperature</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="temperatureCardLabel">
+                  <property name="text">
+                   <string>0 °C</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QFrame" name="frame_10">
+               <property name="styleSheet">
+                <string notr="true">#frame_10 {
+    padding: 4px;
+    border-radius: 6px; 
+    background-color: rgb(228, 186, 76);
+}
+
+QLabel {
+	font: bold;
+	color: white;
+	font-size: 20px;
+}
+
+#tandelta1CardLabel {
+	font-size: 30px;
+}
+</string>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_4">
+                <item>
+                 <widget class="QLabel" name="label_6">
+                  <property name="text">
+                   <string>Tandelta</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="tandelta1CardLabel">
+                  <property name="text">
+                   <string>0 °C</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QFrame" name="frame_11">
+               <property name="styleSheet">
+                <string notr="true">#frame_11 {
+    padding: 4px;
+    border-radius: 6px; 
+    background-color: rgb(228, 186, 76);
+}
+
+QLabel {
+	font: bold;
+	color: white;
+	font-size: 20px;
+}
+
+#tandelta2CardLabel {
+	font-size: 30px;
+}
+</string>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_5">
+                <item>
+                 <widget class="QLabel" name="label_7">
+                  <property name="text">
+                   <string>Tandelta</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="tandelta2CardLabel">
+                  <property name="text">
+                   <string>0 TBN</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="QFrame" name="frame_12">
+               <property name="styleSheet">
+                <string notr="true">#frame_12 {
+    padding: 4px;
+    border-radius: 6px; 
+    background-color: rgb(228, 186, 76);
+}
+
+QLabel {
+	font: bold;
+	color: white;
+	font-size: 20px;
+}
+
+#wearDebrisCardLabel {
+	font-size: 30px;
+}
+</string>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_6">
+                <item>
+                 <widget class="QLabel" name="label_8">
+                  <property name="text">
+                   <string>Wear Debris</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="wearDebrisCardLabel">
+                  <property name="text">
+                   <string>0 PPM</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>104</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_5">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
-           <height>178</height>
+           <width>79</width>
+           <height>20</height>
           </size>
          </property>
         </spacer>
@@ -211,8 +616,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>860</width>
-     <height>26</height>
+     <width>1035</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>

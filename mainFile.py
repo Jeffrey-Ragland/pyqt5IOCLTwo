@@ -223,9 +223,11 @@ class TestingPageUI(QMainWindow):
         self.XymaLogoLabel.setScaledContents(True)
 
     def testingGoBack(self):
+       self.send_empty_string()
        self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.mainPage)
 
     def logout(self): 
+       self.send_empty_string()
        self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.loginPage)
        
     def send_string_format(self):
@@ -290,9 +292,9 @@ class CalibrationMenuPageUI(QMainWindow):
         self.load_logo()
 
     def load_logo(self):
-        pixmap = QPixmap('xymaLogoBlue.png')  
+        pixmap = QPixmap('xymaLogoWhite.png')  
 
-        resized_pixmap = pixmap.scaled(200, 100, aspectRatioMode=1) 
+        resized_pixmap = pixmap.scaled(150, 75, aspectRatioMode=1) 
     
         self.XymaLogoLabel.setPixmap(resized_pixmap)
         self.XymaLogoLabel.setScaledContents(True)
@@ -732,9 +734,9 @@ class WaveguideCalibrationPageUI(QMainWindow):
         self.load_logo()
         
     def load_logo(self):
-        pixmap = QPixmap('xymaLogoBlue.png')  
+        pixmap = QPixmap('xymaLogoWhite.png')  
 
-        resized_pixmap = pixmap.scaled(200, 100, aspectRatioMode=1) 
+        resized_pixmap = pixmap.scaled(150, 75, aspectRatioMode=1) 
     
         self.XymaLogoLabel.setPixmap(resized_pixmap)
         self.XymaLogoLabel.setScaledContents(True)
@@ -762,9 +764,9 @@ class ReportsPageUI(QMainWindow):
         self.load_logo()
         
     def load_logo(self):
-        pixmap = QPixmap('xymaLogoBlue.png')  
+        pixmap = QPixmap('xymaLogoWhite.png')  
 
-        resized_pixmap = pixmap.scaled(200, 100, aspectRatioMode=1) 
+        resized_pixmap = pixmap.scaled(150, 75, aspectRatioMode=1) 
     
         self.xymaLogo.setPixmap(resized_pixmap)
         self.xymaLogo.setScaledContents(True)

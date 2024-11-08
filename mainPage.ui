@@ -6,12 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>766</width>
-    <height>516</height>
+    <width>887</width>
+    <height>607</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>loginCover.jpg</normaloff>loginCover.jpg</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -46,6 +53,12 @@
        </item>
        <item>
         <widget class="QLabel" name="label_2">
+         <property name="styleSheet">
+          <string notr="true">QLabel {
+    color: white;
+	font-weight: bold;
+}</string>
+         </property>
          <property name="text">
           <string>IOCL Software</string>
          </property>
@@ -69,7 +82,7 @@
          <property name="styleSheet">
           <string notr="true">#logoutButton {
 	background-color: rgb(255, 0, 0);
-   color: white;
+   	color: white;
 	border-radius: 6px;
 	padding: 10px 20px;
 	font: bold;
@@ -244,13 +257,15 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>766</width>
-     <height>22</height>
+     <width>887</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources/>
+ <resources>
+  <include location="bg.qrc"/>
+ </resources>
  <connections/>
 </ui>

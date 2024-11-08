@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1030</width>
-    <height>629</height>
+    <width>1026</width>
+    <height>620</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,6 +46,12 @@
        </item>
        <item>
         <widget class="QLabel" name="label_2">
+         <property name="styleSheet">
+          <string notr="true">QLabel {
+    color: white;
+	font-weight: bold;
+}</string>
+         </property>
          <property name="text">
           <string>Reports</string>
          </property>
@@ -66,6 +72,16 @@
        </item>
        <item>
         <widget class="QFrame" name="frame_2">
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+	background-color: rgb(255, 0, 0);
+   	color: white;
+	border-radius: 6px;
+	padding: 10px 20px;
+	font: bold;
+}
+</string>
+         </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
@@ -113,7 +129,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1030</width>
+     <width>1026</width>
      <height>26</height>
     </rect>
    </property>
