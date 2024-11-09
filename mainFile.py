@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QStackedWidget, QTableWidgetItem, QTableWidget, QHeaderView, QPushButton
 from PyQt5.uic import loadUi
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtCore import QThread, pyqtSignal, QSize, Qt
 import sys
 import json
 import time
@@ -13,6 +13,8 @@ class MainUI(QMainWindow):
         super(MainUI, self).__init__()
         self.stackedWidget = QStackedWidget(self)
         self.setCentralWidget(self.stackedWidget)
+        self.setWindowTitle('IOCL Software')
+        self.setWindowIcon(QIcon('Assets/Images/xymaIcon.png'))
 
         self.loginPage = LoginUI(self)
         self.mainPage = MainPageUI(self)
@@ -140,6 +142,8 @@ class MainPageUI(QMainWindow):
                            "}")
 
         self.mainUI = mainUI
+        self.logoutButton.setIcon(QIcon("Assets/Images/logoutIcon.png"))
+        self.logoutButton.setIconSize(QSize(32,32))
         self.logoutButton.clicked.connect(self.logout)
         
         self.testingButton.clicked.connect(self.GoToTestingPage)
@@ -167,13 +171,16 @@ class MainPageUI(QMainWindow):
         self.mainpageXymaLogoLabel.setScaledContents(True)
         
         self.testingIconLabel.setPixmap(resized_pixmap2)
-        self.testingIconLabel.setScaledContents(True)
+        self.testingIconLabel.setScaledContents(False)
+        self.testingIconLabel.setAlignment(Qt.AlignCenter)
         
         self.calibrationIconLabel.setPixmap(resized_pixmap3)
-        self.calibrationIconLabel.setScaledContents(True)
+        self.calibrationIconLabel.setScaledContents(False)
+        self.calibrationIconLabel.setAlignment(Qt.AlignCenter)
         
         self.reportsIconLabel.setPixmap(resized_pixmap4)
-        self.reportsIconLabel.setScaledContents(True)
+        self.reportsIconLabel.setScaledContents(False)
+        self.reportsIconLabel.setAlignment(Qt.AlignCenter)
 
     def logout(self): 
        self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.loginPage)
@@ -224,6 +231,11 @@ class TestingPageUI(QMainWindow):
         self.mainUI = mainUI
         self.serial_connection = serial_connection
         
+        self.testingBackButton.setIcon(QIcon("Assets/Images/backIcon.png"))
+        self.testingBackButton.setIconSize(QSize(32,32))
+        self.testingLogoutButton.setIcon(QIcon("Assets/Images/logoutIcon.png"))
+        self.testingLogoutButton.setIconSize(QSize(32,32))
+        
         # self.testingStopButton.setEnabled(False)
         
         self.testingBackButton.clicked.connect(self.testingGoBack)
@@ -238,9 +250,59 @@ class TestingPageUI(QMainWindow):
     def load_logo(self):
         pixmap = QPixmap('Assets/Images/xymaLogoWhite.png')  
         resized_pixmap = pixmap.scaled(150, 75, aspectRatioMode=1) 
+        
+        pixmap2 = QPixmap('Assets/Images/portsImage.png')
+        resized_pixmap2 = pixmap2.scaled(300, 720, aspectRatioMode=1) 
+        
+        pixmap3 = QPixmap('Assets/Images/densityIcon.png')
+        resized_pixmap3 = pixmap3.scaled(80, 80, aspectRatioMode=1) 
+        
+        pixmap4 = QPixmap('Assets/Images/viscosityIcon.png')
+        resized_pixmap4 = pixmap4.scaled(80, 80, aspectRatioMode=1) 
+        
+        pixmap5 = QPixmap('Assets/Images/tempIcon.png')
+        resized_pixmap5 = pixmap5.scaled(80, 80, aspectRatioMode=1) 
+        
+        pixmap6 = QPixmap('Assets/Images/tandeltaIcon1.png')
+        resized_pixmap6 = pixmap6.scaled(80, 80, aspectRatioMode=1) 
+        
+        pixmap7 = QPixmap('Assets/Images/tandeltaIcon2.png')
+        resized_pixmap7 = pixmap7.scaled(80, 80, aspectRatioMode=1) 
+        
+        pixmap8 = QPixmap('Assets/Images/wearDebrisIcon.png')
+        resized_pixmap8 = pixmap8.scaled(80, 80, aspectRatioMode=1) 
     
         self.XymaLogoLabel.setPixmap(resized_pixmap)
         self.XymaLogoLabel.setScaledContents(True)
+        
+        self.portsImageLabel.setPixmap(resized_pixmap2)
+        self.portsImageLabel.setScaledContents(False)
+        self.portsImageLabel.setAlignment(Qt.AlignCenter)
+        
+        self.densityCardIconLabel.setPixmap(resized_pixmap3)
+        self.densityCardIconLabel.setScaledContents(False)
+        self.densityCardIconLabel.setAlignment(Qt.AlignCenter)
+        
+        self.viscosityCardIconLabel.setPixmap(resized_pixmap4)
+        self.viscosityCardIconLabel.setScaledContents(False)
+        self.viscosityCardIconLabel.setAlignment(Qt.AlignCenter)
+        
+        self.temperatureCardIconLabel.setPixmap(resized_pixmap5)
+        self.temperatureCardIconLabel.setScaledContents(False)
+        self.temperatureCardIconLabel.setAlignment(Qt.AlignCenter)
+        
+        self.tandelta1CardIconLabel.setPixmap(resized_pixmap6)
+        self.tandelta1CardIconLabel.setScaledContents(False)
+        self.tandelta1CardIconLabel.setAlignment(Qt.AlignCenter)
+        
+        self.tandelta2CardIconLabel.setPixmap(resized_pixmap7)
+        self.tandelta2CardIconLabel.setScaledContents(False)
+        self.tandelta2CardIconLabel.setAlignment(Qt.AlignCenter)
+        
+        self.wearDebrisCardIconLabel.setPixmap(resized_pixmap8)
+        self.wearDebrisCardIconLabel.setScaledContents(False)
+        self.wearDebrisCardIconLabel.setAlignment(Qt.AlignCenter)
+        
 
     def testingGoBack(self):
        self.send_empty_string()
@@ -303,6 +365,11 @@ class CalibrationMenuPageUI(QMainWindow):
                            "}")
         
         self.mainUI = mainUI
+        self.calibrationMenuBackButton.setIcon(QIcon("Assets/Images/backIcon.png"))
+        self.calibrationMenuBackButton.setIconSize(QSize(32,32))
+        self.calibrationMenuLogoutButton.setIcon(QIcon("Assets/Images/logoutIcon.png"))
+        self.calibrationMenuLogoutButton.setIconSize(QSize(32,32))
+        
         self.manualCalibrationButton.clicked.connect(self.goToMaualCalibrationPage)
         self.waveguideCalibrationButton.clicked.connect(self.goToWaveguideCalibrationPage)
         self.calibrationMenuBackButton.clicked.connect(self.goToMainMenu)
@@ -313,11 +380,24 @@ class CalibrationMenuPageUI(QMainWindow):
 
     def load_logo(self):
         pixmap = QPixmap('Assets/Images/xymaLogoWhite.png')  
-
         resized_pixmap = pixmap.scaled(150, 75, aspectRatioMode=1) 
+        
+        pixmap2 = QPixmap('Assets/Images/manualCalibrationIcon.png')  
+        resized_pixmap2 = pixmap2.scaled(120, 120, aspectRatioMode=1) 
+        
+        pixmap3 = QPixmap('Assets/Images/waveguideCalibrationIcon.png')  
+        resized_pixmap3 = pixmap3.scaled(120, 120, aspectRatioMode=1) 
     
         self.XymaLogoLabel.setPixmap(resized_pixmap)
         self.XymaLogoLabel.setScaledContents(True)
+        
+        self.manualCalibrationIconLabel.setPixmap(resized_pixmap2)
+        self.manualCalibrationIconLabel.setScaledContents(False)
+        self.manualCalibrationIconLabel.setAlignment(Qt.AlignCenter)
+        
+        self.waveguideCalibrationIconLabel.setPixmap(resized_pixmap3)
+        self.waveguideCalibrationIconLabel.setScaledContents(False)
+        self.waveguideCalibrationIconLabel.setAlignment(Qt.AlignCenter)
         
     def goToMaualCalibrationPage(self):
         self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.manualCalibrationPage)
@@ -343,6 +423,11 @@ class ManualCalibrationPageUI(QMainWindow):
                            "}")
 
         self.mainUI = mainUI
+        
+        self.calibrationBackButton.setIcon(QIcon("Assets/Images/backIcon.png"))
+        self.calibrationBackButton.setIconSize(QSize(32,32))
+        self.logoutButton.setIcon(QIcon("Assets/Images/logoutIcon.png"))
+        self.logoutButton.setIconSize(QSize(32,32))
 
         self.calibrationBackButton.clicked.connect(self.calibrationGoBack)
         self.calibrationAddButton.clicked.connect(self.addToTable)
@@ -748,6 +833,11 @@ class WaveguideCalibrationPageUI(QMainWindow):
         
         self.mainUI = MainUI
         
+        self.waveguideBackButton.setIcon(QIcon("Assets/Images/backIcon.png"))
+        self.waveguideBackButton.setIconSize(QSize(32,32))
+        self.waveguideLogoutButton.setIcon(QIcon("Assets/Images/logoutIcon.png"))
+        self.waveguideLogoutButton.setIconSize(QSize(32,32))
+        
         self.waveguideBackButton.clicked.connect(self.goToCalibrationMenu)
         self.waveguideLogoutButton.clicked.connect(self.logout)
         
@@ -778,6 +868,12 @@ class ReportsPageUI(QMainWindow):
                            "}")
 
         self.mainUI = mainUI
+        
+        self.reportsBackButton.setIcon(QIcon("Assets/Images/backIcon.png"))
+        self.reportsBackButton.setIconSize(QSize(32,32))
+        self.logoutButton.setIcon(QIcon("Assets/Images/logoutIcon.png"))
+        self.logoutButton.setIconSize(QSize(32,32))
+        
         self.reportsBackButton.clicked.connect(self.reportsGoBack)
         self.logoutButton.clicked.connect(self.logout)
         

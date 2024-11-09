@@ -50,10 +50,14 @@
           <string notr="true">QLabel {
     color: white;
 	font-weight: bold;
+	font-size: 40px;
 }</string>
          </property>
          <property name="text">
-          <string>Calibration Page</string>
+          <string>Manual Calibration</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
@@ -76,8 +80,8 @@
           <string notr="true">QPushButton {
 	background-color: rgb(255, 0, 0);
    	color: white;
-	border-radius: 6px;
-	padding: 10px 20px;
+	border-radius: 16px;
+	padding: 4px;
 	font: bold;
 }
 </string>
@@ -92,14 +96,14 @@
           <item>
            <widget class="QPushButton" name="calibrationBackButton">
             <property name="text">
-             <string>Back</string>
+             <string/>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="logoutButton">
             <property name="text">
-             <string>Logout</string>
+             <string/>
             </property>
            </widget>
           </item>
@@ -126,7 +130,7 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>81</height>
+           <height>84</height>
           </size>
          </property>
         </spacer>
@@ -283,7 +287,7 @@ QGroupBox {
                <property name="sizeHint" stdset="0">
                 <size>
                  <width>20</width>
-                 <height>204</height>
+                 <height>237</height>
                 </size>
                </property>
               </spacer>
@@ -296,7 +300,7 @@ QGroupBox {
                <property name="sizeHint" stdset="0">
                 <size>
                  <width>20</width>
-                 <height>204</height>
+                 <height>237</height>
                 </size>
                </property>
               </spacer>
@@ -373,7 +377,7 @@ QGroupBox {
              <number>0</number>
             </property>
             <attribute name="horizontalHeaderVisible">
-             <bool>false</bool>
+             <bool>true</bool>
             </attribute>
             <attribute name="horizontalHeaderStretchLastSection">
              <bool>false</bool>
@@ -391,7 +395,7 @@ QGroupBox {
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>81</height>
+           <height>84</height>
           </size>
          </property>
         </spacer>
@@ -407,7 +411,7 @@ QGroupBox {
      <x>0</x>
      <y>0</y>
      <width>1279</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

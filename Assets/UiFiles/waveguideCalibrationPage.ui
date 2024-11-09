@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>856</width>
-    <height>557</height>
+    <width>860</width>
+    <height>566</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,7 +41,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>161</width>
+           <width>97</width>
            <height>20</height>
           </size>
          </property>
@@ -53,10 +53,11 @@
           <string notr="true">QLabel {
     color: white;
 	font-weight: bold;
+	font-size: 40px;
 }</string>
          </property>
          <property name="text">
-          <string>Waveguide Calibration Page</string>
+          <string>Waveguide Calibration</string>
          </property>
         </widget>
        </item>
@@ -67,7 +68,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>160</width>
+           <width>97</width>
            <height>20</height>
           </size>
          </property>
@@ -79,8 +80,8 @@
           <string notr="true">QPushButton {
 	background-color: rgb(255, 0, 0);
    	color: white;
-	border-radius: 6px;
-	padding: 10px 20px;
+	border-radius: 16px;
+	padding: 4px;
 	font: bold;
 }
 </string>
@@ -95,14 +96,14 @@
           <item>
            <widget class="QPushButton" name="waveguideBackButton">
             <property name="text">
-             <string>Back</string>
+             <string/>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="waveguideLogoutButton">
             <property name="text">
-             <string>Logout</string>
+             <string/>
             </property>
            </widget>
           </item>
@@ -120,7 +121,7 @@
       <property name="sizeHint" stdset="0">
        <size>
         <width>20</width>
-        <height>400</height>
+        <height>430</height>
        </size>
       </property>
      </spacer>
@@ -132,8 +133,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>856</width>
-     <height>26</height>
+     <width>860</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>
