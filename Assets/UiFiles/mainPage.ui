@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>887</width>
-    <height>607</height>
+    <width>940</width>
+    <height>702</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
    <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
      <widget class="QFrame" name="frame">
       <property name="frameShape">
@@ -140,11 +140,30 @@
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,1,1,1,1">
           <item>
-           <widget class="QPushButton" name="testingButton">
-            <property name="styleSheet">
-             <string notr="true">#testingButton {
+           <widget class="QFrame" name="testingFrame">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <property name="spacing">
+              <number>10</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="testingIconLabel">
+               <property name="text">
+                <string>icon</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="testingButton">
+               <property name="styleSheet">
+                <string notr="true">#testingButton {
 	background-color: rgb(0, 0, 255);
    color: white;
 	border-radius: 6px;
@@ -154,10 +173,13 @@
 
 
 </string>
-            </property>
-            <property name="text">
-             <string>Testing</string>
-            </property>
+               </property>
+               <property name="text">
+                <string>Testing</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
           <item>
@@ -174,19 +196,41 @@
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="calibrationButton">
-            <property name="styleSheet">
-             <string notr="true">#calibrationButton {
+           <widget class="QFrame" name="frame_5">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_2">
+             <property name="spacing">
+              <number>10</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="calibrationIconLabel">
+               <property name="text">
+                <string>icon</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="calibrationButton">
+               <property name="styleSheet">
+                <string notr="true">#calibrationButton {
 	background-color: rgb(0, 0, 255);
    color: white;
 	border-radius: 6px;
 	padding: 10px 20px;
 	font: bold;
 }</string>
-            </property>
-            <property name="text">
-             <string>Calibration</string>
-            </property>
+               </property>
+               <property name="text">
+                <string>Calibration</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
           <item>
@@ -203,19 +247,41 @@
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="reportsButton">
-            <property name="styleSheet">
-             <string notr="true">#reportsButton {
+           <widget class="QFrame" name="frame_6">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_3">
+             <property name="spacing">
+              <number>10</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="reportsIconLabel">
+               <property name="text">
+                <string>icon</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="reportsButton">
+               <property name="styleSheet">
+                <string notr="true">#reportsButton {
 	background-color: rgb(0, 0, 255);
    color: white;
 	border-radius: 6px;
 	padding: 10px 20px;
 	font: bold;
 }</string>
-            </property>
-            <property name="text">
-             <string>Reports</string>
-            </property>
+               </property>
+               <property name="text">
+                <string>Reports</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
          </layout>
@@ -257,8 +323,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>887</width>
-     <height>21</height>
+     <width>940</width>
+     <height>26</height>
     </rect>
    </property>
   </widget>

@@ -36,7 +36,7 @@ class MainUI(QMainWindow):
 
         self.stackedWidget.currentChanged.connect(self.on_page_changed)
 
-        self.check_serial_port()
+        # self.check_serial_port()
 
     def on_page_changed(self, index):
         current_page = self.stackedWidget.currentWidget()
@@ -83,22 +83,22 @@ class MainUI(QMainWindow):
             QMessageBox.critical(self, "Serial Connection Error", f"Failed to establish serial connection: {str(e)}")
             sys.exit()
             
-    def closeEvent(self, event):
-        if self.serial_connection and self.serial_connection.is_open:
-            print('Closing serial connection...')
-            self.serial_connection.close()
-            print('Serial connection terminated!')
+    # def closeEvent(self, event):
+    #     if self.serial_connection and self.serial_connection.is_open:
+    #         print('Closing serial connection...')
+    #         self.serial_connection.close()
+    #         print('Serial connection terminated!')
             
-        event.accept()
+    #     event.accept()
             
 class LoginUI(QMainWindow):
     def __init__(self, mainUI):
         super(LoginUI, self).__init__()
 
-        loadUi("newLogin.ui",self)
+        loadUi("Assets/UiFiles/newLogin.ui",self)
 
         self.setStyleSheet("QMainWindow {"
-                           "background-image: url('loginCover.jpg');"  
+                           "background-image: url('Assets/Images/loginCover.jpg');"  
                            "background-position: center;"
                            "}")
 
@@ -111,7 +111,7 @@ class LoginUI(QMainWindow):
         self.load_logo()
 
     def load_logo(self):
-        pixmap = QPixmap('xymaLogoBlue.png')  
+        pixmap = QPixmap('Assets/Images/xymaLogoBlue.png')  
 
         resized_pixmap = pixmap.scaled(200, 100, aspectRatioMode=1) 
     
@@ -132,28 +132,48 @@ class LoginUI(QMainWindow):
 class MainPageUI(QMainWindow):
     def __init__(self, mainUI):
         super(MainPageUI, self).__init__()
-        loadUi("mainPage.ui", self) 
+        loadUi("Assets/UiFiles/mainPage.ui", self) 
 
         self.setStyleSheet("QMainWindow {"
-                           "background-image: url('homepage.png');"  
+                           "background-image: url('Assets/Images/homepage.png');"  
                            "background-position: center;"
                            "}")
 
         self.mainUI = mainUI
         self.logoutButton.clicked.connect(self.logout)
+        
         self.testingButton.clicked.connect(self.GoToTestingPage)
+        # self.testingIconLabel.clicked.connect(self.GoToTestingPage)
+        
         self.calibrationButton.clicked.connect(self.GoToCalibrationMenuPage)
         self.reportsButton.clicked.connect(self.GoToReportsPage)
 
         self.load_logo()
 
     def load_logo(self):
-        pixmap = QPixmap('xymaLogoWhite.png')  
-
+        pixmap = QPixmap('Assets/Images/xymaLogoWhite.png')
         resized_pixmap = pixmap.scaled(150, 75, aspectRatioMode=1) 
+        
+        pixmap2 = QPixmap('Assets/Images/testingIcon.png')
+        resized_pixmap2 = pixmap2.scaled(100, 120, aspectRatioMode=1)
+        
+        pixmap3 = QPixmap('Assets/Images/calibrationIcon.png')
+        resized_pixmap3 = pixmap3.scaled(100, 120, aspectRatioMode=1)
+        
+        pixmap4 = QPixmap('Assets/Images/reportsIcon.png')
+        resized_pixmap4 = pixmap4.scaled(100, 120, aspectRatioMode=1)
     
         self.mainpageXymaLogoLabel.setPixmap(resized_pixmap)
         self.mainpageXymaLogoLabel.setScaledContents(True)
+        
+        self.testingIconLabel.setPixmap(resized_pixmap2)
+        self.testingIconLabel.setScaledContents(True)
+        
+        self.calibrationIconLabel.setPixmap(resized_pixmap3)
+        self.calibrationIconLabel.setScaledContents(True)
+        
+        self.reportsIconLabel.setPixmap(resized_pixmap4)
+        self.reportsIconLabel.setScaledContents(True)
 
     def logout(self): 
        self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.loginPage)
@@ -194,10 +214,10 @@ class SerialReaderThread(QThread):
 class TestingPageUI(QMainWindow):
     def __init__(self, mainUI, serial_connection):
         super(TestingPageUI, self).__init__()
-        loadUi("testingPage.ui", self)
+        loadUi("Assets/UiFiles/testingPage.ui", self)
 
         self.setStyleSheet("QMainWindow {"
-                           "background-image: url('homepage.png');"  
+                           "background-image: url('Assets/Images/homepage.png');"  
                            "background-position: center;"
                            "}")
 
@@ -216,7 +236,7 @@ class TestingPageUI(QMainWindow):
         self.serial_reader_thread = None
 
     def load_logo(self):
-        pixmap = QPixmap('xymaLogoWhite.png')  
+        pixmap = QPixmap('Assets/Images/xymaLogoWhite.png')  
         resized_pixmap = pixmap.scaled(150, 75, aspectRatioMode=1) 
     
         self.XymaLogoLabel.setPixmap(resized_pixmap)
@@ -275,10 +295,10 @@ class TestingPageUI(QMainWindow):
 class CalibrationMenuPageUI(QMainWindow):
     def __init__(self, mainUI):
         super(CalibrationMenuPageUI, self).__init__()
-        loadUi("calibrationMenuPage.ui", self)
+        loadUi("Assets/UiFiles/calibrationMenuPage.ui", self)
         
         self.setStyleSheet("QMainWindow {"
-                           "background-image: url('homepage.png');"  
+                           "background-image: url('Assets/Images/homepage.png');"  
                            "background-position: center;"
                            "}")
         
@@ -292,7 +312,7 @@ class CalibrationMenuPageUI(QMainWindow):
         self.load_logo()
 
     def load_logo(self):
-        pixmap = QPixmap('xymaLogoWhite.png')  
+        pixmap = QPixmap('Assets/Images/xymaLogoWhite.png')  
 
         resized_pixmap = pixmap.scaled(150, 75, aspectRatioMode=1) 
     
@@ -315,10 +335,10 @@ class CalibrationMenuPageUI(QMainWindow):
 class ManualCalibrationPageUI(QMainWindow):
     def __init__(self, mainUI):
         super(ManualCalibrationPageUI, self).__init__()
-        loadUi("manualCalibrationPage.ui", self)
+        loadUi("Assets/UiFiles/manualCalibrationPage.ui", self)
 
         self.setStyleSheet("QMainWindow {"
-                           "background-image: url('homepage.png');"  
+                           "background-image: url('Assets/Images/homepage.png');"  
                            "background-position: center;"
                            "}")
 
@@ -343,7 +363,7 @@ class ManualCalibrationPageUI(QMainWindow):
 
 
     def load_logo(self):
-        pixmap = QPixmap('xymaLogoWhite.png')  
+        pixmap = QPixmap('Assets/Images/xymaLogoWhite.png')  
 
         resized_pixmap = pixmap.scaled(150, 75, aspectRatioMode=1) 
     
@@ -719,10 +739,10 @@ class ManualCalibrationPageUI(QMainWindow):
 class WaveguideCalibrationPageUI(QMainWindow):
     def __init__(self, MainUI):
         super(WaveguideCalibrationPageUI, self).__init__()
-        loadUi("waveguideCalibrationPage.ui", self)
+        loadUi("Assets/UiFiles/waveguideCalibrationPage.ui", self)
         
         self.setStyleSheet("QMainWindow {"
-                           "background-image: url('homepage.png');"  
+                           "background-image: url('Assets/Images/homepage.png');"  
                            "background-position: center;"
                            "}")
         
@@ -734,7 +754,7 @@ class WaveguideCalibrationPageUI(QMainWindow):
         self.load_logo()
         
     def load_logo(self):
-        pixmap = QPixmap('xymaLogoWhite.png')  
+        pixmap = QPixmap('Assets/Images/xymaLogoWhite.png')  
 
         resized_pixmap = pixmap.scaled(150, 75, aspectRatioMode=1) 
     
@@ -750,10 +770,10 @@ class WaveguideCalibrationPageUI(QMainWindow):
 class ReportsPageUI(QMainWindow):
     def __init__(self, mainUI):
         super(ReportsPageUI, self).__init__()
-        loadUi("reportsPage.ui", self)
+        loadUi("Assets/UiFiles/reportsPage.ui", self)
         
         self.setStyleSheet("QMainWindow {"
-                           "background-image: url('homepage.png');"  
+                           "background-image: url('Assets/Images/homepage.png');"  
                            "background-position: center;"
                            "}")
 
@@ -764,7 +784,7 @@ class ReportsPageUI(QMainWindow):
         self.load_logo()
         
     def load_logo(self):
-        pixmap = QPixmap('xymaLogoWhite.png')  
+        pixmap = QPixmap('Assets/Images/xymaLogoWhite.png')  
 
         resized_pixmap = pixmap.scaled(150, 75, aspectRatioMode=1) 
     
