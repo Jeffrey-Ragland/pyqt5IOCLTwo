@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>860</width>
+    <width>969</width>
     <height>566</height>
    </rect>
   </property>
@@ -75,39 +75,17 @@
         </spacer>
        </item>
        <item>
-        <widget class="QFrame" name="frame_2">
+        <widget class="QPushButton" name="waveguideLogoutButton">
          <property name="styleSheet">
-          <string notr="true">QPushButton {
-	background-color: rgb(255, 0, 0);
-   	color: white;
+          <string notr="true">#waveguideLogoutButton {
+	background-color: rgb(0, 0, 0);
 	border-radius: 16px;
-	padding: 4px;
-	font: bold;
 }
 </string>
          </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+         <property name="text">
+          <string/>
          </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <widget class="QPushButton" name="waveguideBackButton">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="waveguideLogoutButton">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-         </layout>
         </widget>
        </item>
       </layout>
@@ -126,6 +104,72 @@
       </property>
      </spacer>
     </item>
+    <item>
+     <widget class="QFrame" name="frame_2">
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+	background-color: rgb(0, 0, 0);
+	border-radius: 16px;
+}
+</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QPushButton" name="waveguideBackButton">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>61</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="copyrightLabel">
+         <property name="styleSheet">
+          <string notr="true">#copyrightLabel {
+	color: white;
+	font-size: 20px;
+	font-weight: 500;
+}</string>
+         </property>
+         <property name="text">
+          <string>© 2024 XYMA Analytics Pvt Ltd, IIT Madras Research Park, Chennai - 600113</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>61</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -133,8 +177,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>860</width>
-     <height>21</height>
+     <width>969</width>
+     <height>26</height>
     </rect>
    </property>
   </widget>

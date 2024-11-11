@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1237</width>
-    <height>822</height>
+    <width>1165</width>
+    <height>784</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
         <widget class="QLabel" name="XymaLogoLabel">
          <property name="text">
@@ -72,45 +72,17 @@
         </spacer>
        </item>
        <item>
-        <widget class="QFrame" name="frame_2">
+        <widget class="QPushButton" name="testingLogoutButton">
          <property name="styleSheet">
-          <string notr="true">QPushButton {
-	background-color: rgb(255, 0, 0);
-   	color: white;
+          <string notr="true">#testingLogoutButton {
+	background-color: rgb(0, 0, 0);
 	border-radius: 16px;
-	padding: 4px;
-	font: bold;
 }
 </string>
          </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+         <property name="text">
+          <string/>
          </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
-          <item>
-           <widget class="QPushButton" name="testingBackButton">
-            <property name="styleSheet">
-             <string notr="true"/>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="testingLogoutButton">
-            <property name="styleSheet">
-             <string notr="true"/>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-         </layout>
         </widget>
        </item>
       </layout>
@@ -124,7 +96,20 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>274</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
        <item>
         <widget class="QFrame" name="frame_5">
          <property name="frameShape">
@@ -156,28 +141,23 @@
         </widget>
        </item>
        <item>
-        <spacer name="horizontalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>274</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
         <widget class="QFrame" name="frame_4">
          <property name="styleSheet">
           <string notr="true">QPushButton {
-	background-color: rgb(228, 186, 76);
 	border-radius: 6px;
+	color: white;
 	padding: 10px 20px;
 	font: bold;
+	font-size: 14px;
 }
 
+#testingStartButton {
+	background-color: green;
+}
+
+#testingStopButton {
+	background-color: red;
+}
 </string>
          </property>
          <property name="frameShape">
@@ -735,6 +715,72 @@ QLabel {
       </layout>
      </widget>
     </item>
+    <item>
+     <widget class="QFrame" name="frame_2">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QPushButton" name="testingBackButton">
+         <property name="styleSheet">
+          <string notr="true">#testingBackButton {
+	background-color: rgb(0, 0, 0);
+	border-radius: 16px;
+}
+</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_6">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>159</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="copyrightLabel">
+         <property name="styleSheet">
+          <string notr="true">#copyrightLabel {
+	color: white;
+	font-size: 20px;
+	font-weight: 500;
+}</string>
+         </property>
+         <property name="text">
+          <string>© 2024 XYMA Analytics Pvt Ltd, IIT Madras Research Park, Chennai - 600113</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_7">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>159</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -742,8 +788,8 @@ QLabel {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1237</width>
-     <height>21</height>
+     <width>1165</width>
+     <height>26</height>
     </rect>
    </property>
   </widget>

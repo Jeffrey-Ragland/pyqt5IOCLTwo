@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>769</width>
-    <height>453</height>
+    <width>1005</width>
+    <height>665</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -59,6 +59,9 @@ padding: 8px;
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <widget class="QFrame" name="frame_4">
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
@@ -130,13 +133,22 @@ padding: 8px;
        </item>
        <item>
         <widget class="QFrame" name="frame_3">
+         <property name="styleSheet">
+          <string notr="true">QFrame {
+	background-color: rgb(228, 186, 76);
+	border-radius: 8px;
+}</string>
+         </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout">
+         <layout class="QVBoxLayout" name="verticalLayout" stretch="1,2,2,1">
+          <property name="spacing">
+           <number>6</number>
+          </property>
           <item>
            <spacer name="verticalSpacer">
             <property name="orientation">
@@ -152,6 +164,13 @@ padding: 8px;
           </item>
           <item>
            <widget class="QFrame" name="frame">
+            <property name="styleSheet">
+             <string notr="true">QLabel {
+	font-size: 16px;
+	font-weight: 500;
+	color: white;
+}</string>
+            </property>
             <property name="frameShape">
              <enum>QFrame::StyledPanel</enum>
             </property>
@@ -159,6 +178,9 @@ padding: 8px;
              <enum>QFrame::Raised</enum>
             </property>
             <layout class="QFormLayout" name="formLayout">
+             <property name="verticalSpacing">
+              <number>12</number>
+             </property>
              <item row="0" column="0">
               <widget class="QLabel" name="label">
                <property name="text">
@@ -208,11 +230,12 @@ padding: 8px;
               <widget class="QPushButton" name="loginButton">
                <property name="styleSheet">
                 <string notr="true">#loginButton {
-    background-color: rgb(0, 0, 255);
-    color: white;
+    background-color: white;
+    color: black;
 	border-radius: 6px;
 	padding: 10px 20px;
 	font: bold;
+	font-size: 14px;
 }
 
 
@@ -291,8 +314,8 @@ padding: 8px;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>769</width>
-     <height>22</height>
+     <width>1005</width>
+     <height>26</height>
     </rect>
    </property>
   </widget>
