@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QStackedWidget, QTableWidgetItem, QTableWidget, QHeaderView, QPushButton
+from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QStackedWidget, QPushButton, QDialog, QVBoxLayout, QLabel, QLineEdit, QRadioButton, QButtonGroup, QPushButton
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtCore import QThread, pyqtSignal, QSize, Qt
@@ -30,7 +30,7 @@ class MainUI(QMainWindow):
 
         self.stackedWidget.currentChanged.connect(self.on_page_changed)
 
-        # self.check_serial_port()
+        self.check_serial_port()
 
     def on_page_changed(self, index):
         current_page = self.stackedWidget.currentWidget()
@@ -77,13 +77,13 @@ class MainUI(QMainWindow):
             QMessageBox.critical(self, "Serial Connection Error", f"Failed to establish serial connection: {str(e)}")
             sys.exit()
             
-    # def closeEvent(self, event):
-    #     if self.serial_connection and self.serial_connection.is_open:
-    #         print('Closing serial connection...')
-    #         self.serial_connection.close()
-    #         print('Serial connection terminated!')
+    def closeEvent(self, event):
+        if self.serial_connection and self.serial_connection.is_open:
+            print('Closing serial connection...')
+            self.serial_connection.close()
+            print('Serial connection terminated!')
             
-    #     event.accept()
+        event.accept()
             
 class LoginUI(QMainWindow):
     def __init__(self, mainUI):
@@ -145,6 +145,36 @@ class SerialReaderThread(QThread):
         self.running = False
         self.quit()
         self.wait()
+        
+
+class StartButtonPopup(QDialog):
+    def __init__(self, parent=None):
+        super(StartButtonPopup, self).__init__(parent)
+        
+        loadUi("Assets/UiFiles/startButtonPopup.ui",self)
+        
+        self.temperatureGroup = QButtonGroup(self)
+        self.temperatureGroup.addButton(self.tempOpt1)
+        self.temperatureGroup.addButton(self.tempOpt2)
+        
+        self.popupSubmitButton.clicked.connect(self.on_submit)
+        self.popupCancelButton.clicked.connect(self.reject)
+        
+    def on_submit(self):
+        fluid_name, temperature = self.get_values()
+        
+        print(f"Fluid Name: {fluid_name}, Temperature: {temperature}")
+        
+        self.accept()
+
+    def get_values(self):
+        fluid_name = self.fluidNameTextbox.text()
+        temperature = None
+        if self.tempOpt1.isChecked():
+            temperature = 40
+        elif self.tempOpt2.isChecked():
+            temperature = 100
+        return fluid_name, temperature
 
 # main page function
 class MainPageUI(QMainWindow):
@@ -168,6 +198,7 @@ class MainPageUI(QMainWindow):
         self.testingLogoutButton.clicked.connect(self.logout)
         self.testingStartButton.clicked.connect(self.send_string_format)
         self.testingStopButton.clicked.connect(self.send_empty_string)
+        self.reportsButton.clicked.connect(self.go_to_reports)
 
         self.load_logo()
         
@@ -181,19 +212,19 @@ class MainPageUI(QMainWindow):
         resized_pixmap2 = pixmap2.scaled(75, 75, aspectRatioMode=1) 
         
         pixmap3 = QPixmap('Assets/Images/densityIcon.png')
-        resized_pixmap3 = pixmap3.scaled(80, 80, aspectRatioMode=1) 
+        resized_pixmap3 = pixmap3.scaled(130, 130, aspectRatioMode=1) 
         
         pixmap4 = QPixmap('Assets/Images/viscosityIcon.png')
-        resized_pixmap4 = pixmap4.scaled(80, 80, aspectRatioMode=1) 
+        resized_pixmap4 = pixmap4.scaled(130, 130, aspectRatioMode=1) 
         
         pixmap5 = QPixmap('Assets/Images/tempIcon.png')
-        resized_pixmap5 = pixmap5.scaled(80, 80, aspectRatioMode=1) 
+        resized_pixmap5 = pixmap5.scaled(130, 130, aspectRatioMode=1) 
         
         pixmap7 = QPixmap('Assets/Images/tandeltaIcon2.png')
-        resized_pixmap7 = pixmap7.scaled(80, 80, aspectRatioMode=1) 
+        resized_pixmap7 = pixmap7.scaled(130, 130, aspectRatioMode=1) 
         
         pixmap8 = QPixmap('Assets/Images/wearDebrisIcon.png')
-        resized_pixmap8 = pixmap8.scaled(80, 80, aspectRatioMode=1) 
+        resized_pixmap8 = pixmap8.scaled(130, 130, aspectRatioMode=1) 
     
         self.XymaLogoLabel.setPixmap(resized_pixmap)
         self.XymaLogoLabel.setScaledContents(False)
@@ -221,6 +252,9 @@ class MainPageUI(QMainWindow):
         self.wearDebrisCardIconLabel.setPixmap(resized_pixmap8)
         self.wearDebrisCardIconLabel.setScaledContents(False)
         self.wearDebrisCardIconLabel.setAlignment(Qt.AlignCenter)
+        
+    def go_to_reports(self):
+        self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.reportsPage)
     
     def logout(self): 
        self.send_empty_string()
@@ -228,6 +262,14 @@ class MainPageUI(QMainWindow):
        
     def send_string_format(self):
         if self.serial_connection:
+            
+            dialog = StartButtonPopup(self)
+            
+            if dialog.exec_() == QDialog.Accepted:
+                # Get the values from the dialog
+                fluid_name, temperature = dialog.get_values()
+                print(f"Fluid Name: {fluid_name}, Temperature: {temperature}")
+            
             data = "\n"
             print(f"String format sent: {data}")
             self.serial_connection.write(data.encode())

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1195</width>
+    <width>1320</width>
     <height>813</height>
    </rect>
   </property>
@@ -83,7 +83,7 @@
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>335</width>
+              <width>398</width>
               <height>20</height>
              </size>
             </property>
@@ -113,7 +113,7 @@
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>335</width>
+              <width>397</width>
               <height>20</height>
              </size>
             </property>
@@ -258,7 +258,7 @@
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>853</width>
+              <width>978</width>
               <height>20</height>
              </size>
             </property>
@@ -339,7 +339,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>85</width>
+           <width>67</width>
            <height>20</height>
           </size>
          </property>
@@ -354,6 +354,9 @@
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_7">
+          <property name="spacing">
+           <number>40</number>
+          </property>
           <item>
            <spacer name="verticalSpacer">
             <property name="orientation">
@@ -377,7 +380,7 @@
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_10">
              <property name="spacing">
-              <number>40</number>
+              <number>80</number>
              </property>
              <item>
               <spacer name="horizontalSpacer_4">
@@ -411,7 +414,7 @@ QLabel {
 #densityCardLabel {
 	font: bold;
 	color: white;
-	font-size: 30px;
+	font-size: 50px;
 }</string>
                </property>
                <property name="frameShape">
@@ -486,7 +489,7 @@ QLabel {
 }
 
 #viscosityCardLabel {
-	font-size: 30px;
+	font-size: 50px;
 }
 </string>
                </property>
@@ -556,7 +559,7 @@ QLabel {
 }
 
 #temperatureCardLabel {
-	font-size: 30px;
+	font-size: 50px;
 }
 </string>
                </property>
@@ -633,9 +636,9 @@ QLabel {
             <property name="frameShadow">
              <enum>QFrame::Raised</enum>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_13">
+            <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="2,1,1,2">
              <property name="spacing">
-              <number>40</number>
+              <number>80</number>
              </property>
              <item>
               <spacer name="horizontalSpacer_6">
@@ -667,7 +670,7 @@ QLabel {
 }
 
 #tandelta2CardLabel {
-	font-size: 30px;
+	font-size: 50px;
 }
 </string>
                </property>
@@ -737,7 +740,7 @@ QLabel {
 }
 
 #wearDebrisCardLabel {
-	font-size: 30px;
+	font-size: 50px;
 }
 </string>
                </property>
@@ -829,7 +832,7 @@ QLabel {
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>84</width>
+           <width>67</width>
            <height>20</height>
           </size>
          </property>
@@ -897,7 +900,7 @@ QLabel {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1195</width>
+     <width>1320</width>
      <height>26</height>
     </rect>
    </property>
