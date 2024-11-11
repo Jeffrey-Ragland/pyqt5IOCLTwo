@@ -45,9 +45,9 @@
      <widget class="QFrame" name="frame_5">
       <property name="styleSheet">
        <string notr="true">#frame_5 {
-background-color: white;
-border-radius: 10px;
-padding: 8px;
+	background-color: rgba(255, 255, 255, 0.3);
+	border-radius: 10px;
+	padding: 8px;
 }</string>
       </property>
       <property name="frameShape">
@@ -135,7 +135,7 @@ padding: 8px;
         <widget class="QFrame" name="frame_3">
          <property name="styleSheet">
           <string notr="true">QFrame {
-	background-color: rgb(228, 186, 76);
+	background-color: rgb(236, 101, 25);
 	border-radius: 8px;
 }</string>
          </property>
@@ -145,9 +145,9 @@ padding: 8px;
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout" stretch="1,2,2,1">
+         <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,1,1">
           <property name="spacing">
-           <number>6</number>
+           <number>12</number>
           </property>
           <item>
            <spacer name="verticalSpacer">
@@ -181,6 +181,12 @@ padding: 8px;
              <property name="verticalSpacing">
               <number>12</number>
              </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
              <item row="0" column="0">
               <widget class="QLabel" name="label">
                <property name="text">
@@ -213,6 +219,12 @@ padding: 8px;
              <enum>QFrame::Raised</enum>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout">
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
              <item>
               <spacer name="horizontalSpacer">
                <property name="orientation">
@@ -231,7 +243,7 @@ padding: 8px;
                <property name="styleSheet">
                 <string notr="true">#loginButton {
     background-color: white;
-    color: black;
+    color: rgb(236, 101, 25);
 	border-radius: 6px;
 	padding: 10px 20px;
 	font: bold;
