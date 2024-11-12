@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1320</width>
-    <height>813</height>
+    <width>1305</width>
+    <height>865</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -235,23 +235,6 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QPushButton" name="reportsButton">
-            <property name="styleSheet">
-             <string notr="true">#reportsButton {
-	background-color: rgb(236,101,25);
-	border-radius: 6px;
-	color: white;
-	padding: 10px 20px;
-	font: bold;
-	font-size: 14px;
-}</string>
-            </property>
-            <property name="text">
-             <string>Reports</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <spacer name="horizontalSpacer_3">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -290,7 +273,7 @@
             <property name="frameShadow">
              <enum>QFrame::Raised</enum>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,0,0">
              <property name="spacing">
               <number>6</number>
              </property>
@@ -311,6 +294,23 @@
                </property>
                <property name="text">
                 <string>Stop</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="reportsButton">
+               <property name="styleSheet">
+                <string notr="true">#reportsButton {
+	background-color: rgb(228, 186, 76);
+	border-radius: 6px;
+	color: white;
+	padding: 10px 20px;
+	font: bold;
+	font-size: 14px;
+}</string>
+               </property>
+               <property name="text">
+                <string>Reports</string>
                </property>
               </widget>
              </item>
@@ -459,7 +459,7 @@ QLabel {
                       <string notr="true"/>
                      </property>
                      <property name="text">
-                      <string>0</string>
+                      <string>870</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignCenter</set>
@@ -529,7 +529,7 @@ QLabel {
                    <item>
                     <widget class="QLabel" name="viscosityCardLabel">
                      <property name="text">
-                      <string>0</string>
+                      <string>223</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignCenter</set>
@@ -599,7 +599,7 @@ QLabel {
                    <item>
                     <widget class="QLabel" name="temperatureCardLabel">
                      <property name="text">
-                      <string>0</string>
+                      <string>40</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignCenter</set>
@@ -900,7 +900,7 @@ QLabel {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1320</width>
+     <width>1305</width>
      <height>26</height>
     </rect>
    </property>

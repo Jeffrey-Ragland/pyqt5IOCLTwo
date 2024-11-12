@@ -1,12 +1,17 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QStackedWidget, QPushButton, QDialog, QVBoxLayout, QLabel, QLineEdit, QRadioButton, QButtonGroup, QPushButton
+from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QStackedWidget, QDialog, QButtonGroup
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import QPixmap, QIcon
-from PyQt5.QtCore import QThread, pyqtSignal, QSize, Qt
+from PyQt5.QtCore import QThread, pyqtSignal, QSize, Qt, QStandardPaths
 import sys
 import json
 import time
 import serial
 import serial.tools.list_ports
+from pymongo import MongoClient
+from pymongo.errors import ServerSelectionTimeoutError
+from datetime import datetime
+import pandas as pd
+import os
 
 class MainUI(QMainWindow):
     def __init__(self):
@@ -15,14 +20,16 @@ class MainUI(QMainWindow):
         self.setCentralWidget(self.stackedWidget)
         self.setWindowTitle('IOCL Software')
         self.setWindowIcon(QIcon('Assets/Images/xymaIcon.png'))
-
+        
+        self.client = None
+        self.collection = None
+        self.setup_mongodb()
+        
         self.loginPage = LoginUI(self)
-        self.mainPage = MainPageUI(self, None)
-        self.reportsPage = ReportsPageUI(self)
+        self.mainPage = MainPageUI(self, collection = self.collection, serial_connection = None)
 
         self.stackedWidget.addWidget(self.loginPage)
         self.stackedWidget.addWidget(self.mainPage)
-        self.stackedWidget.addWidget(self.reportsPage)
         
         self.stackedWidget.setCurrentWidget(self.loginPage)
 
@@ -31,6 +38,19 @@ class MainUI(QMainWindow):
         self.stackedWidget.currentChanged.connect(self.on_page_changed)
 
         self.check_serial_port()
+        
+    def setup_mongodb(self):
+        try:
+            self.client = MongoClient("mongodb://localhost:27017", serverSelectionTimeoutMS=5000)
+            db = self.client['IOCLDatabase']
+            self.collection = db['fluidCollection']
+            
+            self.client.admin.command('ping')
+            print('Connected to MongoDB!')
+            
+        except ServerSelectionTimeoutError:
+            QMessageBox.warning(self, 'Database Connection Error', 'Failed to connect to the MongoDB server!')
+            self.collection = None 
 
     def on_page_changed(self, index):
         current_page = self.stackedWidget.currentWidget()
@@ -82,6 +102,11 @@ class MainUI(QMainWindow):
             print('Closing serial connection...')
             self.serial_connection.close()
             print('Serial connection terminated!')
+            
+        if self.client:
+            print('Closing MongoDB connection...')
+            self.client.close()
+            print('MongoDB connection terminated!')
             
         event.accept()
             
@@ -146,12 +171,18 @@ class SerialReaderThread(QThread):
         self.quit()
         self.wait()
         
-
+        
 class StartButtonPopup(QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, collection=None):
         super(StartButtonPopup, self).__init__(parent)
         
         loadUi("Assets/UiFiles/startButtonPopup.ui",self)
+        
+        self.parent = parent
+        self.collection = collection
+        
+        self.setWindowTitle('Fluid Entry')
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         
         self.temperatureGroup = QButtonGroup(self)
         self.temperatureGroup.addButton(self.tempOpt1)
@@ -159,26 +190,115 @@ class StartButtonPopup(QDialog):
         
         self.popupSubmitButton.clicked.connect(self.on_submit)
         self.popupCancelButton.clicked.connect(self.reject)
-        
+         
     def on_submit(self):
-        fluid_name, temperature = self.get_values()
         
-        print(f"Fluid Name: {fluid_name}, Temperature: {temperature}")
-        
-        self.accept()
-
-    def get_values(self):
         fluid_name = self.fluidNameTextbox.text()
-        temperature = None
+        selectedTemperature = None
         if self.tempOpt1.isChecked():
-            temperature = 40
+            selectedTemperature = 40
         elif self.tempOpt2.isChecked():
-            temperature = 100
-        return fluid_name, temperature
+            selectedTemperature = 100
+            
+        if not fluid_name or selectedTemperature is None:
+            QMessageBox.warning(self, 'Input Required', 'Please fill out all the fields!')
+        else:
+            entry = f"{fluid_name}-{selectedTemperature}"
+            
+            timestamp_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            
+            dbEntry = {
+                "FluidName": entry,
+                "Density": self.parent.densityCardLabel.text(),
+                "Viscosity": self.parent.viscosityCardLabel.text(),
+                "Temperature": self.parent.temperatureCardLabel.text(),
+                "Tandelta": self.parent.tandelta2CardLabel.text(),
+                "WearDebris": self.parent.wearDebrisCardLabel.text(),
+                "Timestamp": timestamp_str
+            }
+            
+            try:
+                self.collection.insert_one(dbEntry)
+            except ServerSelectionTimeoutError:
+                QMessageBox.warning(self, 'Database Connection Error', 'Failed to connect to the MongoDB server!')
+                return
+            
+            try:
+                with open("fluidData.json","r") as file:
+                    data = json.load(file)
+            except (FileNotFoundError, json.JSONDecodeError):
+                data = []
+                
+            if entry in data:
+                QMessageBox.warning(self, 'Duplicate Entry', 'This fluid name and temperature already exists!')
+            else:
+                data.append(entry)
 
+                with open ('fluidData.json', "w") as file:
+                    json.dump(data, file, indent=4)
+
+                print(f"Fluid Name: {fluid_name}, Temperature: {selectedTemperature}")
+                self.accept()
+   
+class ReportsPopup(QDialog):
+    def __init__(self, parent=None, collection=None):
+        super(ReportsPopup, self).__init__(parent)
+        
+        loadUi("Assets/UiFiles/reportsPopup.ui",self)
+        
+        self.parent = parent
+        self.collection = collection
+        
+        self.setWindowTitle('Download Reports')
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        
+        self.generateDropdownItems()
+        
+        self.reportsDownloadButton.clicked.connect(self.downloadReport)
+        
+    def generateDropdownItems(self):
+        try:
+            with open("fluidData.json", "r") as file:
+                data = json.load(file)
+                
+                for entry in data:
+                    self.fluidNameDropdown.addItem(entry)
+                        
+        except (FileNotFoundError, json.JSONDecodeError):
+            print('Error reading the JSON file or the file is empty')
+                    
+    def downloadReport(self):
+        selectedFluid = self.fluidNameDropdown.currentText()
+        
+        if self.collection is not None:
+            try: 
+                results = list(self.collection.find({"FluidName": selectedFluid}))
+                
+                if results:
+                    df = pd.DataFrame(results)
+                    
+                    downloads_folder = QStandardPaths.writableLocation(QStandardPaths.DownloadLocation)
+                    
+                    file_name = f"{selectedFluid}_report.xlsx"
+                    file_path = os.path.join(downloads_folder, file_name)
+                    
+                    df.to_excel(file_path, index=False, engine='openpyxl')
+                    
+                    print("Excel file downloaded!")
+                    
+                else:
+                    print(f"No records found for fluid: {selectedFluid}")
+                    
+            except Exception as e:
+                print(f"Error retrieving data from MongoDB: {e}")
+                
+        else:
+            print("Database connection is not available.")
+        
+        
 # main page function
 class MainPageUI(QMainWindow):
-    def __init__(self, mainUI, serial_connection):
+    def __init__(self, mainUI, collection, serial_connection):
         super(MainPageUI, self).__init__()
         loadUi("Assets/UiFiles/finalisedPage.ui", self)
 
@@ -188,6 +308,7 @@ class MainPageUI(QMainWindow):
                            "}")
 
         self.mainUI = mainUI
+        self.collection = collection
         self.serial_connection = serial_connection
         
         self.testingLogoutButton.setIcon(QIcon("Assets/Images/logoutIcon.png"))
@@ -198,7 +319,7 @@ class MainPageUI(QMainWindow):
         self.testingLogoutButton.clicked.connect(self.logout)
         self.testingStartButton.clicked.connect(self.send_string_format)
         self.testingStopButton.clicked.connect(self.send_empty_string)
-        self.reportsButton.clicked.connect(self.go_to_reports)
+        self.reportsButton.clicked.connect(self.openReportsPopup)
 
         self.load_logo()
         
@@ -253,9 +374,20 @@ class MainPageUI(QMainWindow):
         self.wearDebrisCardIconLabel.setScaledContents(False)
         self.wearDebrisCardIconLabel.setAlignment(Qt.AlignCenter)
         
-    def go_to_reports(self):
-        self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.reportsPage)
-    
+    def openReportsPopup(self):
+        try:
+            with open("fluidData.json", "r") as file:
+                data = json.load(file)
+                
+                if not data:
+                    QMessageBox.warning(self, "No Data Available", 'Fluid entry is empty!')
+                else:
+                    dialog = ReportsPopup(self, collection = self.collection)
+                    dialog.exec_()
+                    
+        except (FileNotFoundError, json.JSONDecodeError):
+            print('Error reading the JSON file or the file is empty')
+           
     def logout(self): 
        self.send_empty_string()
        self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.loginPage)
@@ -263,24 +395,23 @@ class MainPageUI(QMainWindow):
     def send_string_format(self):
         if self.serial_connection:
             
-            dialog = StartButtonPopup(self)
+            dialog = StartButtonPopup(self, collection=self.collection)
             
             if dialog.exec_() == QDialog.Accepted:
-                # Get the values from the dialog
-                fluid_name, temperature = dialog.get_values()
-                print(f"Fluid Name: {fluid_name}, Temperature: {temperature}")
             
-            data = "\n"
-            print(f"String format sent: {data}")
-            self.serial_connection.write(data.encode())
-            time.sleep(0.5)
-            
-            data = "(1,0,0,2.0,200000,50,2,7,4,200000,0,100,4,1,0)"
-            print(f"String format sent: {data}")
-            self.serial_connection.write(data.encode())
-            
-            # self.testingStartButton.setEnabled(False)
-            # self.testingStopButton.setEnabled(True)
+                data = "\n"
+                print(f"String format sent: {data}")
+                self.serial_connection.write(data.encode())
+                time.sleep(0.5)
+
+                data = "(1,0,0,2.0,200000,50,2,7,4,200000,0,100,4,1,0)"
+                print(f"String format sent: {data}")
+                self.serial_connection.write(data.encode())
+
+                # self.testingStartButton.setEnabled(False)
+                # self.testingStopButton.setEnabled(True)
+            else: 
+                print("Fluid entry canceled")
         else:
             print('Serial connection not established')
             
@@ -308,44 +439,10 @@ class MainPageUI(QMainWindow):
             print('Serial reading stopped')
 
     def on_data_received(self, serial_data):
-        print(f'Serial data received: {serial_data}')    
+        # if 1 == 0 :
+            print(f'Serial data received: {serial_data}')    
+           
                         
-class ReportsPageUI(QMainWindow):
-    def __init__(self, mainUI):
-        super(ReportsPageUI, self).__init__()
-        loadUi("Assets/UiFiles/reportsPage.ui", self)
-        
-        self.setStyleSheet("QMainWindow {"
-                           "background-image: url('Assets/Images/homepage.png');"  
-                           "background-position: center;"
-                           "}")
-
-        self.mainUI = mainUI
-        
-        self.reportsBackButton.setIcon(QIcon("Assets/Images/backIcon.png"))
-        self.reportsBackButton.setIconSize(QSize(32,32))
-        self.logoutButton.setIcon(QIcon("Assets/Images/logoutIcon.png"))
-        self.logoutButton.setIconSize(QSize(32,32))
-        
-        self.reportsBackButton.clicked.connect(self.reportsGoBack)
-        self.logoutButton.clicked.connect(self.logout)
-        
-        self.load_logo()
-        
-    def load_logo(self):
-        pixmap = QPixmap('Assets/Images/xymaLogoWhite.png')  
-
-        resized_pixmap = pixmap.scaled(150, 75, aspectRatioMode=1) 
-    
-        self.xymaLogo.setPixmap(resized_pixmap)
-        self.xymaLogo.setScaledContents(True)
-
-    def reportsGoBack(self):
-        self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.mainPage)
-        
-    def logout(self): 
-       self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.loginPage)  
-
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     ui = MainUI() 
