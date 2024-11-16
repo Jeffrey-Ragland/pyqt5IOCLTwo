@@ -22,10 +22,11 @@ class MainUI(QMainWindow):
         self.setWindowIcon(QIcon('Assets/Images/xymaIcon.png'))
         
         self.client = None
+
         self.collection = None
         self.setup_mongodb()
         
-        self.loginPage = LoginUI(self)
+        self.loginPage = LoginUI(self, serial_connection = None)
         self.mainPage = MainPageUI(self, collection = self.collection, serial_connection = None)
 
         self.stackedWidget.addWidget(self.loginPage)
@@ -55,10 +56,11 @@ class MainUI(QMainWindow):
     def on_page_changed(self, index):
         current_page = self.stackedWidget.currentWidget()
         
-        if current_page == self.mainPage:
-            self.mainPage.start_serial_reading()
-        else:
-            self.mainPage.stop_serial_reading()
+       
+        # if current_page == self.mainPage:
+        #     self.mainPage.start_serial_reading()
+        # else:
+        #     self.mainPage.stop_serial_reading()
 
         if isinstance(current_page, LoginUI):
             self.showMaximized()  
@@ -86,7 +88,7 @@ class MainUI(QMainWindow):
             
     def establish_serial_connection(self):
         try:
-            self.serial_connection = serial.Serial(self.port_name, 230400)
+            self.serial_connection = serial.Serial(self.port_name, 9600)
             print(f"Serial connection established on {self.port_name}")
             
             self.mainPage.serial_connection = self.serial_connection
@@ -111,7 +113,7 @@ class MainUI(QMainWindow):
         event.accept()
                 
 class LoginUI(QMainWindow):
-    def __init__(self, mainUI):
+    def __init__(self, mainUI, serial_connection):
         super(LoginUI, self).__init__()
         
         loadUi('Assets/UiFiles/newLogin.ui',self)
@@ -123,6 +125,7 @@ class LoginUI(QMainWindow):
 
         self.loginButton.clicked.connect(self.check_credentials)
         self.mainUI = mainUI
+        self.serial_connection = serial_connection
 
         self.correct_email = "a"
         self.correct_password = "a"
@@ -144,13 +147,16 @@ class LoginUI(QMainWindow):
         if email == self.correct_email and password == self.correct_password:
             self.emailInput.clear()
             self.passwordInput.clear()
+       
+
+
             self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.mainPage) 
         else:
             QMessageBox.warning(self, "Login Failed", "Invalid email or password. Please try again.")
                
 # serial reading thread in testing page    
 class SerialReaderThread(QThread):
-    data_received = pyqtSignal(str)
+    # data_received = pyqtSignal(str)
     
     def __init__(self, serial_connection):
         super(SerialReaderThread, self).__init__()
@@ -162,7 +168,7 @@ class SerialReaderThread(QThread):
             if self.serial_connection and self.serial_connection.in_waiting > 0:
                 serialData = self.serial_connection.readline().decode('utf-8').strip()
                 if serialData:
-                    self.data_received.emit(serialData)
+                    print(serialData)
                 else:
                     self.msleep(10)
                     
@@ -170,8 +176,9 @@ class SerialReaderThread(QThread):
         self.running = False
         self.quit()
         self.wait()
-        
-        
+
+fluid_name = None 
+selectedTemperature = None 
 class StartButtonPopup(QDialog):
     def __init__(self, parent=None, collection=None):
         super(StartButtonPopup, self).__init__(parent)
@@ -189,12 +196,21 @@ class StartButtonPopup(QDialog):
         self.temperatureGroup.addButton(self.tempOpt2)
         
         self.popupSubmitButton.clicked.connect(self.on_submit)
-        self.popupCancelButton.clicked.connect(self.reject)
-         
+        self.popupCancelButton.clicked.connect(self.on_cancel)
+
+    def on_cancel(self):
+        if self.parent and hasattr(self.parent, 'worker_thread') and self.parent.worker_thread:
+            self.parent.worker_thread.stop()
+        self.reject()  
+
+
+  
     def on_submit(self):
-        
+        global fluid_name 
+        global selectedTemperature
         fluid_name = self.fluidNameTextbox.text()
-        selectedTemperature = None
+
+        
         if self.tempOpt1.isChecked():
             selectedTemperature = 40
         elif self.tempOpt2.isChecked():
@@ -205,23 +221,23 @@ class StartButtonPopup(QDialog):
         else:
             entry = f"{fluid_name}-{selectedTemperature}"
             
-            timestamp_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            # timestamp_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             
-            dbEntry = {
-                "FluidName": entry,
-                "Density": self.parent.densityCardLabel.text(),
-                "Viscosity": self.parent.viscosityCardLabel.text(),
-                "Temperature": self.parent.temperatureCardLabel.text(),
-                "Tandelta": self.parent.tandelta2CardLabel.text(),
-                "WearDebris": self.parent.wearDebrisCardLabel.text(),
-                "Timestamp": timestamp_str
-            }
+            # dbEntry = {
+            #     "FluidName": entry,
+            #     "Density": self.parent.densityCardLabel.text(),
+            #     "Viscosity": self.parent.viscosityCardLabel.text(),
+            #     # "Temperature": self.parent.temperatureCardLabel.text(),
+            #     "Tandelta": self.parent.tandelta2CardLabel.text(),
+            #     "WearDebris": self.parent.wearDebrisCardLabel.text(),
+            #     "Timestamp": timestamp_str
+            # }
             
-            try:
-                self.collection.insert_one(dbEntry)
-            except ServerSelectionTimeoutError:
-                QMessageBox.warning(self, 'Database Connection Error', 'Failed to connect to the MongoDB server!')
-                return
+            # try:
+            #     self.collection.insert_one(dbEntry)
+            # except ServerSelectionTimeoutError:
+            #     QMessageBox.warning(self, 'Database Connection Error', 'Failed to connect to the MongoDB server!')
+            #     return
             
             try:
                 with open("fluidData.json","r") as file:
@@ -294,11 +310,66 @@ class ReportsPopup(QDialog):
                 
         else:
             print("Database connection is not available.")
-        
+
+
+
+class WorkerThread(QThread):
+    data_received = pyqtSignal(str)  # Signal emitted when data is received
+    finished = pyqtSignal()  # Signal emitted when the thread finishes
+
+    def __init__(self, serial_connection):
+        super().__init__()
+        self.serial_connection = serial_connection
+        self.stop_requested = False
+
+    def run(self):
+        count = 0
+        while not self.stop_requested:
+            data = "3"
+            self.serial_connection.write(data.encode())
+            self.sleep(1)  # Use QThread's sleep method for smoother UI response
+            count += 1
+            if self.serial_connection and self.serial_connection.in_waiting > 0:
+                serialData = self.serial_connection.readline().decode('utf-8').strip()
+                self.data_received.emit(serialData) 
+
+                if count == 3:
+                    values = serialData.split(',')
+                    second_data = values[0].strip()
+                    if second_data == "1":  # Compare to string "1"
+                        print("oil is there")
+                        # break
+                    else:
+                        # print("no oil")
+                        print(values)
+                        count = 2
+
+        self.finished.emit()  # Emit finished signal when the loop ends
+
+    def stop(self):
+        self.stop_requested = True
+
+class DrainWaitDialog(QDialog):
+    def __init__(self, parent=None):
+        super(DrainWaitDialog, self).__init__(parent)
+
+        loadUi("Assets/UiFiles/drainWaitDialog.ui",self)
+
+        self.parent = parent
+        self.setWindowTitle('Alert')
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowCloseButtonHint)
+
+    def close_alert(self, condition: bool):
+        if condition:
+            self.close()
+
         
 # main page function
 class MainPageUI(QMainWindow):
     def __init__(self, mainUI, collection, serial_connection):
+       
+
         super(MainPageUI, self).__init__()
         loadUi("Assets/UiFiles/finalisedPage.ui", self)
 
@@ -310,6 +381,12 @@ class MainPageUI(QMainWindow):
         self.mainUI = mainUI
         self.collection = collection
         self.serial_connection = serial_connection
+        self.worker_thread = None
+
+
+                
+                        
+
         
         self.testingLogoutButton.setIcon(QIcon("Assets/Images/logoutIcon.png"))
         self.testingLogoutButton.setIconSize(QSize(40,40))
@@ -319,10 +396,10 @@ class MainPageUI(QMainWindow):
         self.testingLogoutButton.clicked.connect(self.logout)
         self.testingStartButton.clicked.connect(self.send_string_format)
         self.testingStopButton.clicked.connect(self.send_empty_string)
+        self.testingDrainButton.clicked.connect(self.drain_fun)
         self.reportsButton.clicked.connect(self.openReportsPopup)
 
         self.load_logo()
-        
         self.serial_reader_thread = None
 
     def load_logo(self):
@@ -362,9 +439,9 @@ class MainPageUI(QMainWindow):
         self.viscosityCardIconLabel.setScaledContents(False)
         self.viscosityCardIconLabel.setAlignment(Qt.AlignCenter)
         
-        self.temperatureCardIconLabel.setPixmap(resized_pixmap5)
-        self.temperatureCardIconLabel.setScaledContents(False)
-        self.temperatureCardIconLabel.setAlignment(Qt.AlignCenter)
+        # self.temperatureCardIconLabel.setPixmap(resized_pixmap5)
+        # self.temperatureCardIconLabel.setScaledContents(False)
+        # self.temperatureCardIconLabel.setAlignment(Qt.AlignCenter)
         
         self.tandelta2CardIconLabel.setPixmap(resized_pixmap7)
         self.tandelta2CardIconLabel.setScaledContents(False)
@@ -374,6 +451,11 @@ class MainPageUI(QMainWindow):
         self.wearDebrisCardIconLabel.setScaledContents(False)
         self.wearDebrisCardIconLabel.setAlignment(Qt.AlignCenter)
         
+
+
+
+
+
     def openReportsPopup(self):
         try:
             with open("fluidData.json", "r") as file:
@@ -392,55 +474,218 @@ class MainPageUI(QMainWindow):
        self.send_empty_string()
        self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.loginPage)
        
+
+ 
+        
+
+
     def send_string_format(self):
+        global fluid_name
+        if self.worker_thread:
+                self.worker_thread.stop()
+  
+ 
         if self.serial_connection:
-            
-            dialog = StartButtonPopup(self, collection=self.collection)
-            
-            if dialog.exec_() == QDialog.Accepted:
-            
-                data = "\n"
-                print(f"String format sent: {data}")
-                self.serial_connection.write(data.encode())
-                time.sleep(0.5)
+            for _ in range(3):  # Loop to read data three times
+                if self.serial_connection.in_waiting > 0:
+                    serialData = self.serial_connection.readline().decode('utf-8').strip()
+                    print("Garbage Values =", serialData)         
 
-                data = "(1,0,0,2.0,200000,50,2,7,4,200000,0,100,4,1,0)"
-                print(f"String format sent: {data}")
-                self.serial_connection.write(data.encode())
+        while(True):
+            time.sleep(1)
+            data = "3"
+            self.serial_connection.write(data.encode())
+            if self.serial_connection and self.serial_connection.in_waiting > 0:
+                serialData = self.serial_connection.readline().decode('utf-8').strip()
+                print("oil status =",serialData)
+              
+                values = serialData.split(',')
+                second_data = values[0].strip()
+                if second_data == "1": 
+                    msg_box = QMessageBox()
+                    msg_box.setWindowTitle("Oil Status")
+                    msg_box.setText("Oil is detected. Do you want to proceed?")
+                    msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+                    response = msg_box.exec_()
 
-                # self.testingStartButton.setEnabled(False)
-                # self.testingStopButton.setEnabled(True)
-            else: 
-                print("Fluid entry canceled")
+                    if response == QMessageBox.Yes:
+                        try:
+                            with open("fluidData.json", 'r') as file:
+                                data = json.load(file)
+                                lastData = data[-1] if data else None
+                                fluid_name = lastData
+                                print('last json data',  lastData)
+                        except FileNotFoundError:
+                            print("The file does not exist.")
+                        except json.JSONDecodeError:
+                            print("Error decoding JSON.")
+
+                        print("User chose Yes.")
+                        # Perform action for "Yes"
+                        self.worker_thread = WorkerThread(self.serial_connection)
+                        self.worker_thread.data_received.connect(self.handle_received_data)
+                        self.worker_thread.finished.connect(self.handle_thread_finished)
+                        self.worker_thread.start()
+                        break
+                    else:
+                        print("User chose No.")
+                        print("oil is there")
+                        data = "3"
+                        self.serial_connection.write(data.encode())
+                        if self.serial_connection and self.serial_connection.in_waiting > 0:
+                            serialData = self.serial_connection.readline().decode('utf-8').strip()
+                            print("oil status",serialData)
+                        
+                            values = serialData.split(',')
+                            second_data = values[2].strip()
+                            
+                            if(float(second_data) > 50):
+                                data = "7"
+                                self.serial_connection.write(data.encode())
+                                time.sleep(1)
+                                while(True):
+                                    data = "3"
+                                    self.serial_connection.write(data.encode())
+                                    if self.serial_connection and self.serial_connection.in_waiting > 0:
+                                        serialData = self.serial_connection.readline().decode('utf-8').strip()
+                                        values = serialData.split(',')
+                                        second_data = values[2].strip()
+                                        if(float(second_data) < 50):
+                                            data = "8"
+                                            self.serial_connection.write(data.encode())
+                                            break
+                            else:
+                                print("oil draining process-----")
+                                data = "1"
+                                self.serial_connection.write(data.encode())
+                                dialog = DrainWaitDialog()
+                                if self.serial_connection and self.serial_connection.in_waiting > 0:
+                                        serialData = self.serial_connection.readline().decode('utf-8').strip()
+                                        dialog.close_alert(True)
+                            
+                                break
+                            
+                                # if self.serial_connection and self.serial_connection.in_waiting > 0:
+                                #     serialData = self.serial_connection.readline().decode('utf-8').strip()
+                                #     print("oil drained processing....",serialData)
+                                #     if self.worker_thread:
+                                #         self.worker_thread.stop()
+                                        
+       
+                else:
+                    print("no oil====")
+                    print(values)        
+                    if self.serial_connection:
+                        dialog = StartButtonPopup(self, collection=self.collection)
+                        if dialog.exec_() == QDialog.Accepted:
+                            data = "0"
+                            self.serial_connection.write(data.encode())
+                            dialog = DrainWaitDialog(self)
+                            dialog.exec_()
+                            dialog.close_alert(True)
+                            if self.serial_connection and self.serial_connection.in_waiting > 0:
+                                serialData = self.serial_connection.readline().decode('utf-8').strip()
+                                print(serialData)
+                                self.worker_thread = WorkerThread(self.serial_connection)
+                                self.worker_thread.data_received.connect(self.handle_received_data)
+                                self.worker_thread.finished.connect(self.handle_thread_finished)
+                                self.worker_thread.start()
+                                break
+     
+
+
+    def handle_received_data(self, data):
+        values = data.split(',')
+        tantelta = values[1].strip()
+        Wear_debris = values[4].strip()
+        try:
+            Wear_debris = f"{float(Wear_debris):.2f}"  
+            tantelta = f"{float(tantelta):.2f}"
+        except ValueError:
+            Wear_debris = "N/A"
+            tantelta = "N/A"
+        self.wearDebrisCardLabel.setText(Wear_debris)
+        self.tandelta2CardLabel.setText(tantelta)
+
+
+        # fluid_name = self.fluidNameTextbox.text()
+        timestamp_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+       
+      
+        entry = f"{fluid_name}-{selectedTemperature}"
+
+
+        if '-' in fluid_name:
+            dbEntry = {
+                "FluidName": fluid_name,
+                "Density": self.densityCardLabel.text(),
+                "Viscosity": self.viscosityCardLabel.text(),
+                # "Temperature": self.parent.temperatureCardLabel.text(),
+                "Tandelta": self.tandelta2CardLabel.text(),
+                "WearDebris": self.wearDebrisCardLabel.text(),
+                "Timestamp": timestamp_str
+            }
+            
+            try:
+                self.collection.insert_one(dbEntry)
+            except ServerSelectionTimeoutError:
+                QMessageBox.warning(self, 'Database Connection Error', 'Failed to connect to the MongoDB server!')
+                return
         else:
-            print('Serial connection not established')
+            dbEntry = {
+                "FluidName": entry,
+                "Density": self.densityCardLabel.text(),
+                "Viscosity": self.viscosityCardLabel.text(),
+                # "Temperature": self.parent.temperatureCardLabel.text(),
+                "Tandelta": self.tandelta2CardLabel.text(),
+                "WearDebris": self.wearDebrisCardLabel.text(),
+                "Timestamp": timestamp_str
+            }
             
+            try:
+                self.collection.insert_one(dbEntry)
+            except ServerSelectionTimeoutError:
+                QMessageBox.warning(self, 'Database Connection Error', 'Failed to connect to the MongoDB server!')
+                return
+
+       
+
+  
+
+    def handle_thread_finished(self):
+        print("Thread finished")     
+             
+
     def send_empty_string(self):
         if self.serial_connection:
-            data = "\n"
+            data = "2"
+            self.stop_requested = True 
             print(f"String format sent: {data}")
             self.serial_connection.write(data.encode())
+            if self.worker_thread:
+                self.worker_thread.stop()
             
-            # self.testingStartButton.setEnabled(True)
-            # self.testingStopButton.setEnabled(False)
         else:
             print('Serial connection not established')
-                
-    def start_serial_reading(self):
-        if self.serial_connection:
-            self.serial_reader_thread = SerialReaderThread(self.serial_connection)
-            self.serial_reader_thread.data_received.connect(self.on_data_received)
-            self.serial_reader_thread.start()
-            print('Serial reading started')
-            
-    def stop_serial_reading(self):
-        if self.serial_reader_thread:
-            self.serial_reader_thread.stop()
-            print('Serial reading stopped')
 
-    def on_data_received(self, serial_data):
-        # if 1 == 0 :
-            print(f'Serial data received: {serial_data}')    
+    def drain_fun(self):
+        if self.serial_connection:
+            data = "1"
+            self.stop_requested = True 
+            print(f"String format sent: {data}")
+            self.serial_connection.write(data.encode())
+            dialog = DrainWaitDialog(self)
+            dialog.exec_()
+            if self.serial_connection and self.serial_connection.in_waiting > 0:
+                    serialData = self.serial_connection.readline().decode('utf-8').strip()
+                    dialog.close_alert(True)
+            if self.worker_thread:
+                self.worker_thread.stop()
+            
+        else:
+            print('Serial connection not established')
+
+
            
                         
 if __name__ == "__main__":
