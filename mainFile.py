@@ -109,13 +109,13 @@ class MainUI(QMainWindow):
             print('MongoDB connection terminated!')
             
         event.accept()
-            
+                
 class LoginUI(QMainWindow):
     def __init__(self, mainUI):
         super(LoginUI, self).__init__()
-
-        loadUi("Assets/UiFiles/newLogin.ui",self)
-
+        
+        loadUi('Assets/UiFiles/newLogin.ui',self)
+        
         self.setStyleSheet("QMainWindow {"
                            "background-image: url('Assets/Images/loginCover.jpg');"  
                            "background-position: center;"
@@ -130,7 +130,7 @@ class LoginUI(QMainWindow):
         self.load_logo()
 
     def load_logo(self):
-        pixmap = QPixmap('Assets/Images/xymaLogoWhite.png')  
+        pixmap = QPixmap('Assets/Images/xymaLogoWhite.png') 
 
         resized_pixmap = pixmap.scaled(200, 100, aspectRatioMode=1) 
     
@@ -147,7 +147,7 @@ class LoginUI(QMainWindow):
             self.mainUI.stackedWidget.setCurrentWidget(self.mainUI.mainPage) 
         else:
             QMessageBox.warning(self, "Login Failed", "Invalid email or password. Please try again.")
-       
+               
 # serial reading thread in testing page    
 class SerialReaderThread(QThread):
     data_received = pyqtSignal(str)
@@ -284,7 +284,7 @@ class ReportsPopup(QDialog):
                     
                     df.to_excel(file_path, index=False, engine='openpyxl')
                     
-                    print("Excel file downloaded!")
+                    QMessageBox.information(self, "Download Complete", f"{file_name} downloaded successfully to {downloads_folder}")
                     
                 else:
                     print(f"No records found for fluid: {selectedFluid}")
