@@ -4,6 +4,7 @@ from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtCore import QThread, pyqtSignal, QSize, Qt, QStandardPaths
 import sys
 import json
+from PyQt5.QtCore import QTimer, QEventLoop
 import time
 import serial
 import serial.tools.list_ports
@@ -12,6 +13,7 @@ from pymongo.errors import ServerSelectionTimeoutError
 from datetime import datetime
 import pandas as pd
 import os
+import tkinter as tk
 
 class MainUI(QMainWindow):
     def __init__(self):
@@ -349,20 +351,7 @@ class WorkerThread(QThread):
     def stop(self):
         self.stop_requested = True
 
-class DrainWaitDialog(QDialog):
-    def __init__(self, parent=None):
-        super(DrainWaitDialog, self).__init__(parent)
 
-        loadUi("Assets/UiFiles/drainWaitDialog.ui",self)
-
-        self.parent = parent
-        self.setWindowTitle('Alert')
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowCloseButtonHint)
-
-    def close_alert(self, condition: bool):
-        if condition:
-            self.close()
 
         
 # main page function
@@ -486,7 +475,7 @@ class MainPageUI(QMainWindow):
   
  
         if self.serial_connection:
-            for _ in range(3):  # Loop to read data three times
+            for _ in range(4):  # Loop to read data three times
                 if self.serial_connection.in_waiting > 0:
                     serialData = self.serial_connection.readline().decode('utf-8').strip()
                     print("Garbage Values =", serialData)         
@@ -502,95 +491,103 @@ class MainPageUI(QMainWindow):
                 values = serialData.split(',')
                 second_data = values[0].strip()
                 if second_data == "1": 
-                    msg_box = QMessageBox()
-                    msg_box.setWindowTitle("Oil Status")
-                    msg_box.setText("Oil is detected. Do you want to proceed?")
-                    msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-                    response = msg_box.exec_()
+                    print("yesss")
+                    break
+                    # msg_box = QMessageBox()
+                    # msg_box.setWindowTitle("Oil Status")
+                    # msg_box.setText("Oil is detected. Do you want to proceed?")
+                    # msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+                    # msg_box.setWindowFlags(msg_box.windowFlags() & ~Qt.WindowCloseButtonHint)
 
-                    if response == QMessageBox.Yes:
-                        try:
-                            with open("fluidData.json", 'r') as file:
-                                data = json.load(file)
-                                lastData = data[-1] if data else None
-                                fluid_name = lastData
-                                print('last json data',  lastData)
-                        except FileNotFoundError:
-                            print("The file does not exist.")
-                        except json.JSONDecodeError:
-                            print("Error decoding JSON.")
+                    # response = msg_box.exec_()
 
-                        print("User chose Yes.")
-                        # Perform action for "Yes"
-                        self.worker_thread = WorkerThread(self.serial_connection)
-                        self.worker_thread.data_received.connect(self.handle_received_data)
-                        self.worker_thread.finished.connect(self.handle_thread_finished)
-                        self.worker_thread.start()
-                        break
-                    else:
-                        print("User chose No.")
-                        print("oil is there")
-                        data = "3"
-                        self.serial_connection.write(data.encode())
-                        if self.serial_connection and self.serial_connection.in_waiting > 0:
-                            serialData = self.serial_connection.readline().decode('utf-8').strip()
-                            print("oil status",serialData)
+                    # if response == QMessageBox.Yes:
+                    #     try:
+                    #         with open("fluidData.json", 'r') as file:
+                    #             data = json.load(file)
+                    #             lastData = data[-1] if data else None
+                    #             fluid_name = lastData
+                    #             print('last json data',  lastData)
+                    #     except FileNotFoundError:
+                    #         print("The file does not exist.")
+                    #     except json.JSONDecodeError:
+                    #         print("Error decoding JSON.")
+
+                    #     print("User chose Yes.")
+                    #     # Perform action for "Yes"
+                    #     self.worker_thread = WorkerThread(self.serial_connection)
+                    #     self.worker_thread.data_received.connect(self.handle_received_data)
+                    #     self.worker_thread.finished.connect(self.handle_thread_finished)
+                    #     self.worker_thread.start()
+                    #     break
+                    # else:
+                    #     print("User chose No.")
+                    #     data = "3"
+                    #     self.serial_connection.write(data.encode())
+                    #     if self.serial_connection and self.serial_connection.in_waiting > 0:
+                    #         serialData = self.serial_connection.readline().decode('utf-8').strip()
+                    #         print("oil status",serialData)
                         
-                            values = serialData.split(',')
-                            second_data = values[2].strip()
-                            
-                            if(float(second_data) > 50):
-                                data = "7"
-                                self.serial_connection.write(data.encode())
-                                time.sleep(1)
-                                while(True):
-                                    data = "3"
-                                    self.serial_connection.write(data.encode())
-                                    if self.serial_connection and self.serial_connection.in_waiting > 0:
-                                        serialData = self.serial_connection.readline().decode('utf-8').strip()
-                                        values = serialData.split(',')
-                                        second_data = values[2].strip()
-                                        if(float(second_data) < 50):
-                                            data = "8"
-                                            self.serial_connection.write(data.encode())
-                                            break
-                            else:
-                                print("oil draining process-----")
-                                data = "1"
-                                self.serial_connection.write(data.encode())
-                                dialog = DrainWaitDialog()
-                                if self.serial_connection and self.serial_connection.in_waiting > 0:
-                                        serialData = self.serial_connection.readline().decode('utf-8').strip()
-                                        dialog.close_alert(True)
-                            
-                                break
-                            
-                                # if self.serial_connection and self.serial_connection.in_waiting > 0:
-                                #     serialData = self.serial_connection.readline().decode('utf-8').strip()
-                                #     print("oil drained processing....",serialData)
-                                #     if self.worker_thread:
-                                #         self.worker_thread.stop()
-                                        
-       
-                else:
-                    print("no oil====")
-                    print(values)        
-                    if self.serial_connection:
-                        dialog = StartButtonPopup(self, collection=self.collection)
-                        if dialog.exec_() == QDialog.Accepted:
-                            data = "0"
-                            self.serial_connection.write(data.encode())
-                            dialog = DrainWaitDialog(self)
-                            dialog.exec_()
-                            dialog.close_alert(True)
-                            if self.serial_connection and self.serial_connection.in_waiting > 0:
-                                serialData = self.serial_connection.readline().decode('utf-8').strip()
-                                print(serialData)
-                                self.worker_thread = WorkerThread(self.serial_connection)
-                                self.worker_thread.data_received.connect(self.handle_received_data)
-                                self.worker_thread.finished.connect(self.handle_thread_finished)
-                                self.worker_thread.start()
-                                break
+                    #         values = serialData.split(',')
+                    #         second_data = values[2].strip()
+                    #         print("response data =",second_data)
+                          
+                    #         if(float(second_data) >50):
+                    #             print("above 50")
+                    #             data = "7"
+                    #             self.serial_connection.write(data.encode())
+                    #             time.sleep(1)
+                    #             while(True):
+                    #                 data = "3"
+                    #                 self.serial_connection.write(data.encode())
+                    #                 if self.serial_connection and self.serial_connection.in_waiting > 0:
+                    #                     serialData = self.serial_connection.readline().decode('utf-8').strip()
+                    #                     values = serialData.split(',')
+                    #                     second_data = values[2].strip()
+                    #                     if(float(second_data) < 50):
+                    #                         data = "8"
+                    #                         self.serial_connection.write(data.encode())
+                    #                         break
+
+                            # else:
+                            #     print("oil draining process-----")
+                            #     self.serial_connection.write(data.encode())
+                            #     self.message_box = QMessageBox(self)
+                            #     self.message_box.setWindowTitle("Alert")
+                            #     self.message_box.setText("Oil is Draining, Please Wait!!")
+                            #     self.message_box.setStandardButtons(QMessageBox.Ok)
+
+                            #     self.message_box.show()
+                            #     data = "1"
+                            #     self.serial_connection.write(data.encode())
+                            #     if self.serial_connection and self.serial_connection.in_waiting > 0:
+                            #             serialData = self.serial_connection.readline().decode('utf-8').strip()
+                            #             self.message_box.close
+                            #             break
+                                
+                elif second_data == "0":
+                    print("no oil and oil filling process====") 
+                    break     
+                    # if self.serial_connection:
+                    #     dialog = StartButtonPopup(self, collection=self.collection)
+                    #     if dialog.exec_() == QDialog.Accepted:
+                    #         data = "0"
+                    #         self.serial_connection.write(data.encode())
+                    #         self.message_box = QMessageBox(self)
+                    #         self.message_box.setWindowTitle("Alert")
+                    #         self.message_box.setText("Oil is being filled, Please wait!")
+                    #         self.message_box.setStandardButtons(QMessageBox.Ok)
+                    #         self.message_box.show()
+
+                    #         if  self.serial_connection.in_waiting > 0:
+                    #             serialData = self.serial_connection.readline().decode('utf-8').strip()
+                    #             print("after waiting response==",serialData)
+                    #             QTimer.singleShot(1000, self.message_box.close)  # Close after 1 second
+                    #             self.worker_thread = WorkerThread(self.serial_connection)
+                    #             self.worker_thread.data_received.connect(self.handle_received_data)
+                    #             self.worker_thread.finished.connect(self.handle_thread_finished)
+                    #             self.worker_thread.start()
+                    #             break
      
 
 
@@ -615,6 +612,16 @@ class MainPageUI(QMainWindow):
         entry = f"{fluid_name}-{selectedTemperature}"
 
 
+
+        # selva code
+
+
+
+
+
+
+
+
         if '-' in fluid_name:
             dbEntry = {
                 "FluidName": fluid_name,
@@ -628,6 +635,8 @@ class MainPageUI(QMainWindow):
             
             try:
                 self.collection.insert_one(dbEntry)
+                print("successfuly saved...!")
+
             except ServerSelectionTimeoutError:
                 QMessageBox.warning(self, 'Database Connection Error', 'Failed to connect to the MongoDB server!')
                 return
@@ -644,6 +653,7 @@ class MainPageUI(QMainWindow):
             
             try:
                 self.collection.insert_one(dbEntry)
+                print("successfuly saved...!")
             except ServerSelectionTimeoutError:
                 QMessageBox.warning(self, 'Database Connection Error', 'Failed to connect to the MongoDB server!')
                 return
@@ -664,30 +674,36 @@ class MainPageUI(QMainWindow):
             self.serial_connection.write(data.encode())
             if self.worker_thread:
                 self.worker_thread.stop()
-            
         else:
             print('Serial connection not established')
 
     def drain_fun(self):
         if self.serial_connection:
+            for _ in range(3):  # Loop to read data three times
+                if self.serial_connection.in_waiting > 0:
+                    serialData = self.serial_connection.readline().decode('utf-8').strip()
+                    print("Garbage Values =", serialData)         
+
             data = "1"
             self.stop_requested = True 
-            print(f"String format sent: {data}")
             self.serial_connection.write(data.encode())
-            dialog = DrainWaitDialog(self)
-            dialog.exec_()
-            if self.serial_connection and self.serial_connection.in_waiting > 0:
-                    serialData = self.serial_connection.readline().decode('utf-8').strip()
-                    dialog.close_alert(True)
-            if self.worker_thread:
-                self.worker_thread.stop()
+            self.message_box = QMessageBox(self)
+            self.message_box.setWindowTitle("Alert")
+            self.message_box.setText("Oil is Draining, Please Wait!!")
+            self.message_box.setStandardButtons(QMessageBox.Ok)
+
+            self.message_box.show()
             
+
+            if self.serial_connection.in_waiting > 0:
+                    serialData = self.serial_connection.readline().decode('utf-8').strip()
+                    print("After --",serialData)
+                    QTimer.singleShot(1000, self.message_box.close)  # Close after 1 second
+                    if self.worker_thread:
+                        self.worker_thread.stop()
         else:
             print('Serial connection not established')
 
-
-           
-                        
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     ui = MainUI() 

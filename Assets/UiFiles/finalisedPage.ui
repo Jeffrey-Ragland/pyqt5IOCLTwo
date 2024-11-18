@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1085</width>
+    <width>958</width>
     <height>865</height>
    </rect>
   </property>
@@ -467,7 +467,7 @@ QLabel {
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>89</width>
+                 <width>5</width>
                  <height>20</height>
                 </size>
                </property>
@@ -618,7 +618,7 @@ QLabel {
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>89</width>
+                 <width>5</width>
                  <height>20</height>
                 </size>
                </property>
@@ -787,7 +787,7 @@ QLabel {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1085</width>
+     <width>958</width>
      <height>22</height>
     </rect>
    </property>
